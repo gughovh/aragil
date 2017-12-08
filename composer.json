@@ -2,7 +2,7 @@
   "name": "gughovh/micro",
   "description": "The Micro Framework.",
   "keywords": ["framework", "micro"],
-  "version" : "0.0.0",
+  "version" : "0.0.1",
   "license": "MIT",
   "require": {
     "php": ">=7.0.0"
