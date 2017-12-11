@@ -94,9 +94,9 @@ class Response
                 $this->addHeader('Content-Type', 'application/json');
                 break;
             case ($this->content instanceof self):
-                $this->content = $this->content->getContent();
                 $this->headers = $this->content->getHeaders();
                 $this->status = $this->content->getStatus();
+                $this->content = $this->content->getContent();
                 break;
         }
     }
