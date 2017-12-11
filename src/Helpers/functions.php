@@ -78,6 +78,11 @@ function config($key = null, $default = null)
     return $config->get($key, $default);
 }
 
+/**
+ * @param $params
+ * @param array $option
+ * @return PDO
+ */
 function getPdo($params, $option = [])
 {
     static $connections = [];
@@ -90,4 +95,19 @@ function getPdo($params, $option = [])
     }
 
     return $connections[$key];
+}
+
+/**
+ * @return \Aragil\Request\Request
+ */
+function request()
+{
+    static $request = null;
+
+    if(is_null($request)) {
+        $di = Di::getInstance();
+        $request = $di['request'];
+    }
+
+    return $request;
 }
