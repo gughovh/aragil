@@ -23,7 +23,7 @@ class HttpRequest extends Request
     /**
      * @param mixed $param
      * @param mixed $default
-     * @return array|null
+     * @return mixed
      */
     public function get($param = null, $default = null)
     {
