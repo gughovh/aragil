@@ -1,7 +1,7 @@
 {
-  "name": "gughovh/micro",
-  "description": "The Micro Framework.",
-  "keywords": ["framework", "micro"],
+  "name": "gughovh/aragil",
+  "description": "The Aragil Framework.",
+  "keywords": ["framework", "aragil"],
   "version" : "0.0.1",
   "license": "MIT",
   "require": {
