@@ -77,3 +77,17 @@ function config($key = null, $default = null)
     $config = $di['config'];
     return $config->get($key, $default);
 }
+
+function getPdo($params, $option = [])
+{
+    static $connections = [];
+
+    $key = md5(json_encode(array_merge($params, $option)));
+
+    if(!array_key_exists($key, $connections)) {
+        $dsn = "mysql:dbname={$params['dbname']};host={$params['host']}";
+        $connections[$key] = new PDO($dsn, $params['username'], $params['password'], $option);
+    }
+
+    return $connections[$key];
+}
