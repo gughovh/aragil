@@ -2,7 +2,6 @@
   "name": "gughovh/aragil",
   "description": "The Aragil Framework.",
   "keywords": ["framework", "aragil"],
-  "version" : "0.0.4",
   "license": "MIT",
   "require": {
     "php": ">=7.0.0"
