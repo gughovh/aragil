@@ -16,9 +16,33 @@ class HttpRequest extends Request
 
     protected function init()
     {
-//        $this->method = $_SERVER['REQUEST_METHOD'];
         $this->queryParams = $_GET;
         $this->formParams = $_POST;
+    }
+
+    /**
+     * @param mixed $param
+     * @param mixed $default
+     * @return array|null
+     */
+    public function get($param = null, $default = null)
+    {
+        if(is_nan($param)) {
+            return $this->all();
+        }
+
+        return $this->queryParams[$param] ?? $this->formParams[$param] ?? $default;
+    }
+
+    /**
+     * @return array
+     */
+    public function all()
+    {
+        return array_merge(
+            $this->formParams,
+            $this->queryParams
+        );
     }
 
     /**
