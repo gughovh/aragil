@@ -27,7 +27,7 @@ abstract class Model
      */
     public function __construct($settings)
     {
-        if(isset($settings['pdo']) && $settings['pds'] instanceof \PDO) {
+        if(isset($settings['pdo']) && $settings['pdo'] instanceof \PDO) {
             $this->setConnection($settings['pdo']);
         }
 
