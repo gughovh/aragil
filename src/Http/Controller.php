@@ -10,7 +10,7 @@ namespace Aragil\Http;
 
 
 use Aragil\Core\Di;
-use Aragil\Request\Request;
+use Aragil\Request\HttpRequest;
 
 abstract class Controller
 {
@@ -32,7 +32,7 @@ abstract class Controller
     }
 
     /**
-     * @return Request
+     * @return HttpRequest
      */
     public function request()
     {
