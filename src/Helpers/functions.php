@@ -6,6 +6,9 @@
  * Time: 1:30 PM
  */
 
+use Aragil\Core\Config;
+use Aragil\Core\Di;
+
 /**
  * @param $key
  * @param null $default
@@ -60,4 +63,17 @@ function buildHeaders($headers)
     }
 
     return $headersStr;
+}
+
+/**
+ * @param null $key
+ * @param null $default
+ * @return array|mixed|null
+ */
+function config($key = null, $default = null)
+{
+    $di = Di::getInstance();
+    /** @var $config Config */
+    $config = $di['config'];
+    return $config->get($key, $default);
 }
