@@ -6,7 +6,7 @@
  * Time: 11:24 AM
  */
 
-namespace Micro\Console;
+namespace Aragil\Console;
 
 
 class BaseCommand extends Command

@@ -6,9 +6,9 @@
  * Time: 4:44 PM
  */
 
-namespace Micro\Dispatcher;
+namespace Aragil\Dispatcher;
 
-use Micro\Http\Response;
+use Aragil\Http\Response;
 
 class HttpDispatcher extends Dispatcher
 {

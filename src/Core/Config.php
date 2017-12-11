@@ -6,7 +6,7 @@
  * Time: 11:00 AM
  */
 
-namespace Micro\Core;
+namespace Aragil\Core;
 
 
 class Config

@@ -40,11 +40,11 @@ function env($key, $default = null)
  * @param $content
  * @param int $status
  * @param array $headers
- * @return \Micro\Http\Response
+ * @return \Aragil\Http\Response
  */
 function response($content, $status = 200, $headers = [])
 {
-    return new \Micro\Http\Response($content, $status, $headers);
+    return new \Aragil\Http\Response($content, $status, $headers);
 }
 
 /**

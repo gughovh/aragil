@@ -6,7 +6,7 @@
  * Time: 6:13 PM
  */
 
-namespace Micro\Request;
+namespace Aragil\Request;
 
 abstract class Request
 {

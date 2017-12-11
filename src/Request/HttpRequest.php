@@ -6,7 +6,7 @@
  * Time: 2:58 PM
  */
 
-namespace Micro\Request;
+namespace Aragil\Request;
 
 
 class HttpRequest extends Request

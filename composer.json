@@ -9,7 +9,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Micro\\": "src/"
+      "Aragil\\": "src/"
     },
     "files": [
       "src/Helpers/functions.php"

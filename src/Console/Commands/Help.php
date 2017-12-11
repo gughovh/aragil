@@ -6,13 +6,13 @@
  * Time: 11:11 AM
  */
 
-namespace Micro\Console\Commands;
+namespace Aragil\Console\Commands;
 
 
-use Micro\Console\Command;
-use Micro\Core\Di;
-use Micro\Router\Route;
-use Micro\Router\Router;
+use Aragil\Console\Command;
+use Aragil\Core\Di;
+use Aragil\Router\Route;
+use Aragil\Router\Router;
 
 class Help extends Command
 {

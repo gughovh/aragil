@@ -6,7 +6,7 @@
  * Time: 3:56 PM
  */
 
-namespace Micro\Exceptions;
+namespace Aragil\Exceptions;
 
 
 use Throwable;

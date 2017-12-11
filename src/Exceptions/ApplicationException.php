@@ -6,7 +6,7 @@
  * Time: 3:55 PM
  */
 
-namespace Micro\Exceptions;
+namespace Aragil\Exceptions;
 
 
 class ApplicationException extends \RuntimeException

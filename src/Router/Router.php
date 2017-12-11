@@ -6,9 +6,9 @@
  * Time: 6:30 PM
  */
 
-namespace Micro\Router;
+namespace Aragil\Router;
 
-use Micro\Request\Request;
+use Aragil\Request\Request;
 
 class Router
 {

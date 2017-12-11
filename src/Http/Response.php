@@ -6,7 +6,7 @@
  * Time: 6:13 PM
  */
 
-namespace Micro\Http;
+namespace Aragil\Http;
 
 
 class Response

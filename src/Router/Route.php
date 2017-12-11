@@ -6,14 +6,14 @@
  * Time: 6:29 PM
  */
 
-namespace Micro\Router;
-use Micro\Core\Di;
-use Micro\Request\ConsoleRequest;
-use Micro\Request\Request;
+namespace Aragil\Router;
+use Aragil\Core\Di;
+use Aragil\Request\ConsoleRequest;
+use Aragil\Request\Request;
 
 /**
  * Class Route
- * @package Micro\Router
+ * @package Aragil\Router
  * @method static get($route, $handler)
  * @method static post($route, $handler)
  * @method static prefix($prefix, $handler)

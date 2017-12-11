@@ -6,12 +6,12 @@
  * Time: 3:29 PM
  */
 
-namespace Micro\Core;
+namespace Aragil\Core;
 
 
-use Micro\Exceptions\ApplicationException;
-use Micro\Http\Response;
-use Micro\Request\Request;
+use Aragil\Exceptions\ApplicationException;
+use Aragil\Http\Response;
+use Aragil\Request\Request;
 
 class ErrorHandler
 {

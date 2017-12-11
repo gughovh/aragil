@@ -6,11 +6,11 @@
  * Time: 4:46 PM
  */
 
-namespace Micro\Dispatcher;
+namespace Aragil\Dispatcher;
 
-use Micro\Console\BaseCommand;
-use Micro\Console\Command;
-use Micro\Core\Di;
+use Aragil\Console\BaseCommand;
+use Aragil\Console\Command;
+use Aragil\Core\Di;
 
 class ConsoleDispatcher extends Dispatcher
 {

@@ -6,7 +6,7 @@
  * Time: 2:54 PM
  */
 
-namespace Micro\Request;
+namespace Aragil\Request;
 
 
 class ConsoleRequest extends Request

@@ -6,14 +6,14 @@
  * Time: 11:30 AM
  */
 
-namespace Micro\Dispatcher;
+namespace Aragil\Dispatcher;
 
-use Micro\Core\Di;
-use Micro\Exceptions\NotFoundException;
-use Micro\Request\Request;
-use Micro\Http\Response;
-use Micro\Router\Route;
-use Micro\Router\Router;
+use Aragil\Core\Di;
+use Aragil\Exceptions\NotFoundException;
+use Aragil\Request\Request;
+use Aragil\Http\Response;
+use Aragil\Router\Route;
+use Aragil\Router\Router;
 
 abstract class Dispatcher
 {

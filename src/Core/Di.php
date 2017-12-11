@@ -6,7 +6,7 @@
  * Time: 11:16 AM
  */
 
-namespace Micro\Core;
+namespace Aragil\Core;
 
 
 class Di implements \ArrayAccess

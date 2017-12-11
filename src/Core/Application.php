@@ -6,12 +6,12 @@
  * Time: 6:08 PM
  */
 
-namespace Micro\Core;
+namespace Aragil\Core;
 
 
-use Micro\Dispatcher\Dispatcher;
-use Micro\Request\Request;
-use Micro\Router\Router;
+use Aragil\Dispatcher\Dispatcher;
+use Aragil\Request\Request;
+use Aragil\Router\Router;
 
 class Application
 {
@@ -40,7 +40,7 @@ class Application
     private function setConfig()
     {
         $di = $this->getDi();
-        $di['config'] = \Micro\Core\Config::make();
+        $di['config'] = \Aragil\Core\Config::make();
 
         return $this;
     }
@@ -80,7 +80,7 @@ class Application
     }
 
     /**
-     * @return \Micro\Http\Response
+     * @return \Aragil\Http\Response
      */
     public function handle()
     {
