@@ -8,7 +8,6 @@
 
 namespace Aragil\Request;
 
-
 class HttpRequest extends Request
 {
     private $queryParams;
