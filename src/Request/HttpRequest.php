@@ -27,7 +27,7 @@ class HttpRequest extends Request
      */
     public function get($param = null, $default = null)
     {
-        if(is_nan($param)) {
+        if(is_null($param)) {
             return $this->all();
         }
 
