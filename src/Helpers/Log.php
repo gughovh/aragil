@@ -22,9 +22,25 @@ class Log
         self::INFO  => 'log_info.txt',
     ];
 
+    public static function fatal(\Throwable $fatal)
+    {
+        $txt = "{$fatal->getMessage()} \r\n {$fatal->getTraceAsString()} ";
+        self::write(self::FATAL, $txt);
+    }
+
     public static function error($error)
     {
         self::write(self::ERROR, $error);
+    }
+
+    public static function debug($debug)
+    {
+        self::write(self::DEBUG, $debug);
+    }
+
+    public static function info($info)
+    {
+        self::write(self::INFO, $info);
     }
 
     protected static function write($level, $txt)
