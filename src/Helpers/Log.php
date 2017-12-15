@@ -24,7 +24,7 @@ class Log
 
     public static function fatal(\Throwable $fatal)
     {
-        $txt = "{$fatal->getMessage()} \r\n {$fatal->getTraceAsString()} ";
+        $txt = "{$fatal->getMessage()}\r\n{$fatal->getTraceAsString()} ";
         self::write(self::FATAL, $txt);
     }
 
