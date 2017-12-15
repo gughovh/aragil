@@ -21,7 +21,7 @@ class Config
     public function __construct(array $arrayConfig = null, bool $eagerLoading = true)
     {
         $this->configs = $arrayConfig;
-        $this->eagerLoading = $arrayConfig;
+        $this->eagerLoading = $eagerLoading;
     }
 
     /**
