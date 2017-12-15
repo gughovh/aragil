@@ -101,7 +101,7 @@ class Config
             $configs[pathinfo($configFile, PATHINFO_FILENAME)] = require $configFile;
         }
 
-        return $config ? $configs[$config] : $configs;
+        return $configs;
     }
 
     /**
