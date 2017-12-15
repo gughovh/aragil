@@ -32,7 +32,7 @@ class Config
     {
         $configs = $eagerLoading ? self::loadConfig() : [];
 
-        return new self($configs);
+        return new self($configs, $eagerLoading);
     }
 
     /**
