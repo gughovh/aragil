@@ -49,9 +49,10 @@ class HttpRequest extends Request
      */
     protected function parsePathInfo()
     {
+        $urlInfo = parse_url($_SERVER['REQUEST_URI']);
         return array_values(
             array_filter(
-                explode('/', str_replace($_SERVER['SCRIPT_NAME'],'', $_SERVER['REQUEST_URI']))
+                explode('/', str_replace($_SERVER['SCRIPT_NAME'],'', $urlInfo['path']))
             )
         );
     }
