@@ -12,7 +12,7 @@ namespace Aragil\Http;
 use Aragil\Core\Di;
 use Aragil\Request\HttpRequest;
 
-abstract class Controller
+class Controller
 {
     /**
      * @var null|Di

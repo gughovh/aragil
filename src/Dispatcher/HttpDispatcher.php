@@ -8,6 +8,7 @@
 
 namespace Aragil\Dispatcher;
 
+use Aragil\Http\Controller;
 use Aragil\Http\Response;
 
 class HttpDispatcher extends Dispatcher
@@ -21,7 +22,8 @@ class HttpDispatcher extends Dispatcher
         $routeArguments = $this->getRouteArguments();
 
         if($handler = $route->getHandler()) {
-            return new Response($handler(...array_values($routeArguments)));
+            /** @var $handler \Closure */
+            return new Response($handler->call(new Controller(), ...array_values($routeArguments)));
         }
 
         $controllerClass = $route->getController();
