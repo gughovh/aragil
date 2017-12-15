@@ -87,6 +87,10 @@ class Config
         $this->merge(
             self::loadConfig($config, array_keys($this->configs))
         );
+        
+        if(is_null($config)) {
+            $this->eagerLoading = true;
+        }
     }
 
     private static function loadConfig($config = null, $exceptOnes = [])
