@@ -40,7 +40,7 @@ class Application
     private function setConfig()
     {
         $di = $this->getDi();
-        $di['config'] = \Aragil\Core\Config::make();
+        $di['config'] = \Aragil\Core\Config::make(false);
 
         return $this;
     }
