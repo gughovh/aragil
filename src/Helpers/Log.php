@@ -45,7 +45,7 @@ class Log
 
     protected static function write($level, $txt)
     {
-        $dir = self::getDir();
+        $dir = static::getDir();
         $file = self::OPTIONS[$level];
 
         $handle = fopen("{$dir}/{$file}","a+");
