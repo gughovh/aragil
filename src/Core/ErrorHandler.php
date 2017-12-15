@@ -10,6 +10,7 @@ namespace Aragil\Core;
 
 
 use Aragil\Exceptions\ApplicationException;
+use Aragil\Helpers\Log;
 use Aragil\Http\Response;
 use Aragil\Request\Request;
 
@@ -22,6 +23,8 @@ class ErrorHandler
      */
     public static function handle(\Throwable $throwable)
     {
+        Log::fatal($throwable);
+
         if(!Request::isHttp()) {
             throw $throwable;
         }

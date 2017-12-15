@@ -16,23 +16,21 @@ class Config
     private static $pathDelimiter;
 
     private $configs;
+    private $eagerLoading;
 
-    public function __construct(array $arrayConfig = null)
+    public function __construct(array $arrayConfig = null, bool $eagerLoading = true)
     {
         $this->configs = $arrayConfig;
+        $this->eagerLoading = $arrayConfig;
     }
 
     /**
+     * @param bool $eagerLoading
      * @return Config
      */
-    public static function make()
+    public static function make($eagerLoading = true)
     {
-        $configs = [];
-        $dir = BASE_DIR . DS . 'config' . DS;
-
-        foreach (glob("{$dir}*.php") as $config) {
-            $configs[pathinfo($config, PATHINFO_FILENAME)] = require $config;
-        }
+        $configs = $eagerLoading ? self::loadConfig() : [];
 
         return new self($configs);
     }
@@ -45,10 +43,14 @@ class Config
     public function get($index = null, $defaultValue = null)
     {
         if(is_null($index)) {
+            $this->loadConfigWhenLazyLoadMode();
             return $this->configs;
         }
 
         $keys = explode($this->getPathDelimiter(), $index);
+
+        $this->loadConfigWhenLazyLoadMode($keys[0]);
+
         $value = $this->configs;
 
         foreach ($keys as $key) {
@@ -61,11 +63,45 @@ class Config
     }
 
     /**
-     * @param Config $config
+     * @param Config|array $config
      */
-    public function merge(Config $config)
+    public function merge($config)
     {
-        $this->configs = array_merge($this->configs, $config->get());
+        if($config instanceof self) {
+            $this->configs = array_merge($this->configs, $config->get());
+        } elseif (is_array($config)) {
+            $this->configs = array_merge($this->configs, $config);
+        }
+    }
+
+    private function loadConfigWhenLazyLoadMode($config = null)
+    {
+        if($this->eagerLoading
+            || ($config
+                && array_key_exists($config, $this->configs)
+            || (!$config
+                && $this->configs)
+            )
+        ) {
+            return;
+        }
+
+        $this->merge(
+            self::loadConfig($config)
+        );
+    }
+
+    private static function loadConfig($config = null)
+    {
+        $dir = self::getConfigDir() . DS;
+        $pattern = $config ?? '*';
+        $configs = [];
+
+        foreach (glob("{$dir}{$pattern}.php") as $configFile) {
+            $configs[pathinfo($configFile, PATHINFO_FILENAME)] = require $configFile;
+        }
+
+        return $config ? $configs[$config] : $configs;
     }
 
     /**
@@ -85,5 +121,22 @@ class Config
     private function getPathDelimiter()
     {
         return self::$pathDelimiter ?? self::DEFAULT_PATH_DELIMITER;
+    }
+
+    /**
+     * @param $config
+     * @return string
+     */
+    private function getConfigFile($config)
+    {
+        return self::getConfigDir() . DS . $config . '.php';
+    }
+
+    /**
+     * @return string
+     */
+    private static function getConfigDir()
+    {
+        return BASE_DIR . DS . 'config';
     }
 }
