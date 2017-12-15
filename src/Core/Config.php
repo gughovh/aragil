@@ -79,26 +79,28 @@ class Config
         if($this->eagerLoading
             || ($config
                 && array_key_exists($config, $this->configs)
-            || (!$config
-                && $this->configs)
             )
         ) {
             return;
         }
 
         $this->merge(
-            self::loadConfig($config)
+            self::loadConfig($config, array_keys($this->configs))
         );
     }
 
-    private static function loadConfig($config = null)
+    private static function loadConfig($config = null, $exceptOnes = [])
     {
         $dir = self::getConfigDir() . DS;
         $pattern = $config ?? '*';
         $configs = [];
 
         foreach (glob("{$dir}{$pattern}.php") as $configFile) {
-            $configs[pathinfo($configFile, PATHINFO_FILENAME)] = require $configFile;
+            $configName = pathinfo($configFile, PATHINFO_FILENAME);
+
+            if(!in_array($configName, $exceptOnes)) {
+                $configs[$configName] = require $configFile;
+            }
         }
 
         return $configs;
