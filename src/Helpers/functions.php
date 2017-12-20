@@ -15,19 +15,19 @@ use Aragil\Core\Di;
  * @return array|bool|null
  * @throws Exception
  */
-function env($key, $default = null)
+function ini($key, $default = null)
 {
-    static $env = null;
+    static $ini = null;
 
-    if(is_null($env)) {
-        if(!file_exists($envFile = BASE_DIR . DS . '.env')) {
-            throw new Exception('The .env file does not exists');
+    if(is_null($ini)) {
+        if(!file_exists($iniFile = BASE_DIR . DS . '.ini')) {
+            throw new Exception('The .ini file does not exists');
         }
-        $env = parse_ini_file($envFile, true, INI_SCANNER_TYPED);
+        $ini = parse_ini_file($iniFile, true, INI_SCANNER_TYPED);
     }
 
     $keys = explode('.', $key);
-    $value = $env;
+    $value = $ini;
     while ($_key = array_shift($keys)) {
         if(!array_key_exists($_key, $value)) {
             $value =  $default;
