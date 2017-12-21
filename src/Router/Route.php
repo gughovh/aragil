@@ -216,6 +216,17 @@ class Route
      * @param $route
      * @return $this
      */
+    private function _option($route)
+    {
+        $this->addRoute($route, 'option');
+
+        return $this;
+    }
+
+    /**
+     * @param $route
+     * @return $this
+     */
     private function _console($route)
     {
         self::setDelimiter(self::CONSOLE_DELIMITER);
