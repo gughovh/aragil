@@ -16,6 +16,7 @@ use Aragil\Request\Request;
  * @package Aragil\Router
  * @method static get($route, $handler)
  * @method static post($route, $handler)
+ * @method static option($route, $handler)
  * @method static prefix($prefix, $handler)
  * @method static console($command, $handler)
  */
