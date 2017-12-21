@@ -16,7 +16,7 @@ use Aragil\Request\Request;
  * @package Aragil\Router
  * @method static get($route, $handler)
  * @method static post($route, $handler)
- * @method static option($route, $handler)
+ * @method static options($route, $handler)
  * @method static prefix($prefix, $handler)
  * @method static console($command, $handler)
  */
@@ -41,7 +41,7 @@ class Route
         'post' => [
             'resolveMethod' => 'setHandler'
         ],
-        'option' => [
+        'options' => [
             'resolveMethod' => 'setHandler'
         ],
         'prefix' => [
@@ -216,7 +216,7 @@ class Route
      * @param $route
      * @return $this
      */
-    private function _option($route)
+    private function _options($route)
     {
         $this->addRoute($route, 'option');
 
