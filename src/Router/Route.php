@@ -40,6 +40,9 @@ class Route
         'post' => [
             'resolveMethod' => 'setHandler'
         ],
+        'option' => [
+            'resolveMethod' => 'setHandler'
+        ],
         'prefix' => [
             'resolveMethod' => 'setGroup'
         ],
