@@ -15,8 +15,10 @@ use Aragil\Request\ConsoleRequest;
 
 class ConsoleDispatcher extends Dispatcher
 {
+    private static $defaultRoutesIsLoaded = false;
+
     /**
-     * @return void
+     * @return mixed
      */
     public function dispatch()
     {
@@ -52,6 +54,9 @@ class ConsoleDispatcher extends Dispatcher
      */
     protected function init()
     {
-        Command::loadDefaultRoutes();
+        if (!self::$defaultRoutesIsLoaded) {
+            Command::loadDefaultRoutes();
+            self::$defaultRoutesIsLoaded = true;
+        }
     }
 }
