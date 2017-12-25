@@ -8,12 +8,14 @@
 
 namespace Aragil\Router;
 
-use Aragil\Request\Request;
-
 class Router
 {
     const HTTP_ROUTES = 'web';
     const CONSOLE_ROUTES = 'console';
+    const ROUTES = [
+        self::HTTP_ROUTES,
+        self::CONSOLE_ROUTES,
+    ];
 
     /**
      * @var array
@@ -50,7 +52,9 @@ class Router
      */
     public function loadRoutes()
     {
-        require ROUTES_DIR . DS . "{$this->getRouteFile()}.php";
+        foreach (self::ROUTES as $route) {
+            require ROUTES_DIR . DS . "{$route}.php";
+        }
     }
 
     /**
@@ -59,13 +63,5 @@ class Router
     public function getRoutes()
     {
         return $this->routes;
-    }
-
-    /**
-     * @return string
-     */
-    private function getRouteFile()
-    {
-        return Request::isHttp() ? self::HTTP_ROUTES : self::CONSOLE_ROUTES;
     }
 }
