@@ -15,9 +15,12 @@ class ConsoleRequest extends Request
 
     private $consoleParams = [];
 
+    private $command;
+
     protected function init()
     {
-        $this->setMethod('console');
+        $this->setMethod(self::DEFAULT_METHOD);
+        $this->command = $_SERVER['argv'][1] ?? null;
         $argv = array_slice($_SERVER['argv'], 2);
 
         foreach ($argv as $arg) {
@@ -28,13 +31,28 @@ class ConsoleRequest extends Request
         }
     }
 
-    protected function parsePathInfo()
-    {
-        return array_filter(explode(':', $_SERVER['argv'][1]));
-    }
-
     public function getConsoleParams()
     {
         return $this->consoleParams;
+    }
+
+    public function isHttp()
+    {
+        return false;
+    }
+
+    public function setCalledCommand(string $command)
+    {
+        $this->command = $command;
+    }
+
+    public function setOptions(array $options)
+    {
+        $this->consoleParams = $options;
+    }
+
+    protected function parsePathInfo()
+    {
+        return array_filter(explode(':', $this->command));
     }
 }

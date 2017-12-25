@@ -11,6 +11,7 @@ namespace Aragil\Dispatcher;
 use Aragil\Console\BaseCommand;
 use Aragil\Console\Command;
 use Aragil\Core\Di;
+use Aragil\Request\ConsoleRequest;
 
 class ConsoleDispatcher extends Dispatcher
 {
@@ -20,7 +21,10 @@ class ConsoleDispatcher extends Dispatcher
     public function dispatch()
     {
         $route = $this->getRoute();
-        $options = Di::getInstance()['request']->getConsoleParams();
+
+        /** @var $consoleRequest ConsoleRequest */
+        $consoleRequest = $this->getDi()['request'];
+        $options = $consoleRequest->getConsoleParams();
         $arguments = $this->getRouteArguments();
 
         if(($handler = $route->getHandler()) instanceof \Closure) {
@@ -29,7 +33,8 @@ class ConsoleDispatcher extends Dispatcher
 
             $command->setOptions($options);
             $command->setArguments($arguments);
-            $handler->call($command);
+
+            return $handler->call($command);
         } else {
             $commandClass = $route->getController();
             /** @var $command Command*/
@@ -38,7 +43,7 @@ class ConsoleDispatcher extends Dispatcher
             $command->setOptions($options);
             $command->setArguments($arguments);
 
-            $command->{$route->getAction()}();
+            return $command->{$route->getAction()}();
         }
     }
 

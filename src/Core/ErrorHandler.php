@@ -17,15 +17,18 @@ use Aragil\Request\Request;
 class ErrorHandler
 {
     /**
+     * @param Application $app
      * @param \Throwable $throwable
      * @return Response
      * @throws \Throwable
      */
-    public static function handle(\Throwable $throwable)
+    public static function handle(Application $app, \Throwable $throwable)
     {
         Log::fatal($throwable);
 
-        if(!Request::isHttp()) {
+        /** @var $request Request */
+        $request = $app->getDi()['request'];
+        if(!$request->isHttp()) {
             throw $throwable;
         }
 

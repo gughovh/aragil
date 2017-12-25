@@ -11,7 +11,7 @@ namespace Aragil\Core;
 
 class Di implements \ArrayAccess
 {
-    private static $di = null;
+    private static $dependencyInjectors = [];
 
     private $instances = [];
 
@@ -20,13 +20,31 @@ class Di implements \ArrayAccess
     /**
      * @return Di
      */
-    public static function getInstance()
+    public static function getInstance($appName = 'main')
     {
-        if (is_null(self::$di)) {
-            self::$di = new self();
+        if (!array_key_exists($appName, self::$dependencyInjectors)) {
+            throw new \LogicException("Does not exists DI for {$appName} application");
         }
 
-        return self::$di;
+        return self::$dependencyInjectors[$appName];
+    }
+
+    public static function newInstance($appName)
+    {
+        if (array_key_exists($appName, self::$dependencyInjectors)) {
+            throw new \LogicException("The DI for {$appName} application already created");
+        }
+
+        return self::$dependencyInjectors[$appName] = new self();
+    }
+
+    public static function removeInstance($appName)
+    {
+        if (!array_key_exists($appName, self::$dependencyInjectors)) {
+            throw new \LogicException("Does not exists DI for {$appName} application");
+        }
+
+        unset(self::$dependencyInjectors[$appName]);
     }
 
     /**

@@ -8,28 +8,28 @@
 
 namespace Aragil\Request;
 
+use Aragil\Core\Application;
+
 abstract class Request
 {
-    private $pathInfo;
     private $method = null;
 
     public function __construct()
     {
         $this->setMethod($_SERVER['REQUEST_METHOD']);
-        $this->pathInfo = $this->parsePathInfo();
         $this->init();
     }
 
     abstract protected function init();
 
-    public static function make()
+    public static function make(Application $app)
     {
-        return self::isHttp() ? new HttpRequest() : new ConsoleRequest();
-    }
-
-    public static function isHttp()
-    {
-        return !defined('APP_CONSOLE');
+        switch ($app->getType()) {
+            case Application::HTTP:
+                return new HttpRequest();
+            case Application::CONSOLE;
+                return new ConsoleRequest();
+        }
     }
 
     /**
@@ -37,7 +37,7 @@ abstract class Request
      */
     public function getPathInfo()
     {
-        return $this->pathInfo;
+        return $this->parsePathInfo();
     }
 
     /**
@@ -55,6 +55,11 @@ abstract class Request
     {
         $this->method = $method;
     }
+
+    /**
+     * @return bool
+     */
+    abstract public function isHttp();
 
     /**
      * @return array

@@ -18,6 +18,8 @@ class Help extends Command
 {
     const CLOSURE_COMMAND_DESCRIPTION = 'See route file, this command has not description, it will call as anonymous function';
 
+    protected $description = 'Show this help message';
+
     public function handle()
     {
         $di = Di::getInstance();

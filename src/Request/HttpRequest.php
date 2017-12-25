@@ -56,4 +56,12 @@ class HttpRequest extends Request
             )
         );
     }
+
+    /**
+     * @return bool
+     */
+    public function isHttp()
+    {
+        return true;
+    }
 }
