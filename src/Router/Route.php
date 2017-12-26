@@ -196,6 +196,7 @@ class Route
      */
     private function _get($route)
     {
+        self::setDelimiter(self::HTTP_DELIMITER);
         $this->addRoute($route, 'get');
 
         return $this;
@@ -207,6 +208,7 @@ class Route
      */
     private function _post($route)
     {
+        self::setDelimiter(self::HTTP_DELIMITER);
         $this->addRoute($route, 'post');
 
         return $this;
@@ -218,6 +220,7 @@ class Route
      */
     private function _options($route)
     {
+        self::setDelimiter(self::HTTP_DELIMITER);
         $this->addRoute($route, 'option');
 
         return $this;
