@@ -61,10 +61,6 @@ class Route
     private $handler = null;
     private $variableRouteParams = [];
     private $routeParams = null;
-
-    private static $delimiter = null;
-    private static $defaultDelimiter = self::HTTP_DELIMITER;
-
     private static $tree = [];
 
     public static function __callStatic($name, $arguments)
@@ -87,8 +83,7 @@ class Route
      */
     public function getRouteString()
     {
-        $delimiter = self::getDelimiter();
-        return join($delimiter, array_merge($this->prefixes, [$this->route]));
+        return join($this->getDelimiter(), array_merge($this->prefixes, [$this->route]));
     }
 
     /**
@@ -97,7 +92,7 @@ class Route
     public function getRouteParams()
     {
         if(is_null($this->routeParams)) {
-            $this->routeParams = array_merge($this->prefixes, array_filter(explode(self::getDelimiter(), $this->route)));
+            $this->routeParams = array_merge($this->prefixes, array_filter(explode($this->getDelimiter(), $this->route)));
         }
         return $this->routeParams;
     }
@@ -196,7 +191,6 @@ class Route
      */
     private function _get($route)
     {
-        self::setDelimiter(self::HTTP_DELIMITER);
         $this->addRoute($route, 'get');
 
         return $this;
@@ -208,7 +202,6 @@ class Route
      */
     private function _post($route)
     {
-        self::setDelimiter(self::HTTP_DELIMITER);
         $this->addRoute($route, 'post');
 
         return $this;
@@ -220,7 +213,6 @@ class Route
      */
     private function _options($route)
     {
-        self::setDelimiter(self::HTTP_DELIMITER);
         $this->addRoute($route, 'option');
 
         return $this;
@@ -232,7 +224,6 @@ class Route
      */
     private function _console($route)
     {
-        self::setDelimiter(self::CONSOLE_DELIMITER);
         $this->addRoute($route, ConsoleRequest::DEFAULT_METHOD);
 
         return $this;
@@ -395,15 +386,8 @@ class Route
         }
     }
 
-    private static function setDelimiter($delimiter)
+    private function getDelimiter()
     {
-        if(is_null(self::$delimiter)) {
-            self::$delimiter = $delimiter;
-        }
-    }
-
-    private static function getDelimiter()
-    {
-        return self::$delimiter ?? self::$defaultDelimiter;
+        return $this->getMethod() == ConsoleRequest::DEFAULT_METHOD ? self::CONSOLE_DELIMITER : self::HTTP_DELIMITER;
     }
 }
