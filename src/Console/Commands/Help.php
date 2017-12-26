@@ -11,6 +11,7 @@ namespace Aragil\Console\Commands;
 
 use Aragil\Console\Command;
 use Aragil\Core\Di;
+use Aragil\Request\ConsoleRequest;
 use Aragil\Router\Route;
 use Aragil\Router\Router;
 
@@ -31,6 +32,10 @@ class Help extends Command
         $this->line('Available commands:');
         /** @var $route  Route */
         foreach ($routes as $route) {
+            if($route->getMethod() != ConsoleRequest::DEFAULT_METHOD) {
+                continue;
+            }
+
             if(($handler = $route->getHandler()) instanceof \Closure) {
                 $description = self::CLOSURE_COMMAND_DESCRIPTION;
             } else {
