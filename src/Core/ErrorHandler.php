@@ -47,7 +47,7 @@ class ErrorHandler
             return;
         }
 
-        register_shutdown_function(function () use($app) {
+        register_shutdown_function(function () {
             $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
             if (!is_null($error = error_get_last()) && in_array($error['type'], $fatalErrors)) {
                 Log::fatal(new \ErrorException(
