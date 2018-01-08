@@ -68,6 +68,7 @@ class Application
         $this->setRequest();
         $this->setRouter();
         $this->setDispatcher();
+        $this->registerShutdownHandler();
     }
 
     /**
@@ -118,6 +119,11 @@ class Application
         $di['request'] = Request::make($this);
 
         return $this;
+    }
+
+    private function registerShutdownHandler()
+    {
+        ErrorHandler::registerShutdownHandler();
     }
 
     /**

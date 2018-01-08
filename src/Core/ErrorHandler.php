@@ -16,6 +16,8 @@ use Aragil\Request\Request;
 
 class ErrorHandler
 {
+    private static $shutdownRegistreted = false;
+
     /**
      * @param Application $app
      * @param \Throwable $throwable
@@ -37,5 +39,23 @@ class ErrorHandler
         }
 
         throw $throwable;
+    }
+
+    public static function registerShutdownHandler()
+    {
+        if(self::$shutdownRegistreted) {
+            return;
+        }
+
+        register_shutdown_function(function () use($app) {
+            $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
+            if (!is_null($error = error_get_last()) && in_array($error['type'], $fatalErrors)) {
+                Log::fatal(new \ErrorException(
+                    $error['message'], $error['type'], 0, $error['file'], $error['line'], 0
+                ));
+            }
+        });
+
+        self::$shutdownRegistreted = true;
     }
 }
