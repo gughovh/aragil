@@ -91,6 +91,15 @@ abstract class Command
     }
 
     /**
+     * @param $text
+     */
+    protected function error($text)
+    {
+        $this->line($text);
+        die(PHP_EOL);
+    }
+
+    /**
      * @param $fromWhere
      * @param $key
      * @param $default
