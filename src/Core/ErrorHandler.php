@@ -10,6 +10,7 @@ namespace Aragil\Core;
 
 
 use Aragil\Exceptions\ApplicationException;
+use Aragil\Exceptions\NotFoundException;
 use Aragil\Helpers\Log;
 use Aragil\Http\Response;
 use Aragil\Request\Request;
@@ -26,7 +27,9 @@ class ErrorHandler
      */
     public static function handle(Application $app, \Throwable $throwable)
     {
-        Log::fatal($throwable);
+        if(!($throwable instanceof NotFoundException)) {
+            Log::fatal($throwable);
+        }
 
         /** @var $request Request */
         $request = $app->getDi()['request'];
