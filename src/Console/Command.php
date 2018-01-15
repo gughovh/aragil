@@ -80,6 +80,9 @@ abstract class Command
     {
         Route::console('', Help::class);
         Route::console('help', Help::class);
+        Route::prefix('migrate', function () {
+            Route::console('{db}', \App\Console\Commands\Migrate::class);
+        });
     }
 
     /**

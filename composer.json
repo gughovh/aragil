@@ -4,7 +4,8 @@
   "keywords": ["framework", "aragil"],
   "license": "MIT",
   "require": {
-    "php": ">=7.0.0"
+    "php": ">=7.0.0",
+    "smi2/phpclickhouse": "^0.17.11"
   },
   "autoload": {
     "psr-4": {

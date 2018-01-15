@@ -9,7 +9,7 @@
 namespace Aragil\Model;
 
 
-abstract class Model
+abstract class Model implements ModelInterface
 {
     /**
      * @var null|\PDO
