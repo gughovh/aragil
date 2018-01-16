@@ -10,6 +10,7 @@ namespace Aragil\Console;
 
 
 use Aragil\Console\Commands\Help;
+use Aragil\Console\Commands\Migrate;
 use Aragil\Router\Route;
 
 abstract class Command
@@ -81,7 +82,7 @@ abstract class Command
         Route::console('', Help::class);
         Route::console('help', Help::class);
         Route::prefix('migrate', function () {
-            Route::console('{db}', \App\Console\Commands\Migrate::class);
+            Route::console('{db}', Migrate::class);
         });
     }
 
