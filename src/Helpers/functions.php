@@ -90,7 +90,7 @@ function getPdo($params, $option = [])
     $key = md5(json_encode(array_merge($params, $option)));
 
     if(!array_key_exists($key, $connections)) {
-        $dsn = "mysql:dbname={$params['dbname']};host={$params['host']}";
+        $dsn = "mysql:dbname={$params['database']};host={$params['host']}";
         $connections[$key] = new PDO($dsn, $params['username'], $params['password'], $option);
     }
 
