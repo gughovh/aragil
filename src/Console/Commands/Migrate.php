@@ -42,23 +42,26 @@ class Migrate extends Command
 
     private function migrateMysql(array $options)
     {
-        $pdo = getPdo([
+        $pdo = getPdo($a = [
             'host' => $this->options('h') ?? ini('mysql.host'),
             'username' => $this->options('u') ?? ini('mysql.username'),
             'password' => $this->options('p') ?? ini('mysql.password'),
-            'dbname' => $this->options('d') ?? ini('mysql.database'),
+            'database' => $this->options('d') ?? ini('mysql.database'),
         ]);
 
         $this->migrate($options['migrationsDir'], $options['migratedFile'], function ($migration) use($pdo) {
             $pdo->exec($migration);
+
+            if($pdo->errorCode() != '00000') {
+                $error = $pdo->errorInfo();
+                throw new \PDOException("SQLSTATE : $error[0] $error[2]");
+            }
         });
 
     }
 
     private function migrateClickHouse(array $options)
     {
-//        $client = Model::getClickHouseConnection();
-
         $this->migrate($options['migrationsDir'], $options['migratedFile'], function ($migration) /*use($client)*/ {
             CHModel::getClickHouseConnection()->write($migration);
         });
@@ -79,13 +82,19 @@ class Migrate extends Command
                 $this->line("Started migration {$filename}");
                 $migrate($migration);
                 $this->line("Ended migration {$filename}");
+                $failed = false;
             } catch (\Throwable $e) {
                 $this->line("Filed migration {$filename}");
+                $this->line($e->getMessage());
                 $meta['status'] = 'failed';
                 $meta['error'] = (array)$e;
+                $failed = true;
             }
 
             $migratedData[$filename] = $meta;
+            if($failed) {
+                break;
+            }
         }
 
         if(empty($migrations)) {
