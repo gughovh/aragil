@@ -64,4 +64,22 @@ abstract class Model implements ModelInterface
         $this->connectionParams = $params;
     }
 
+    public function insert($data)
+    {
+        $values = join(',', array_map(function ($row) {
+            $row = array_map(function($value) {
+                return $this->getConnection()->quote($value);
+            }, $row);
+            return '(' . join(',', $row) . ')';
+        }, $data));
+
+        $fields = join(',', array_keys($values[0]));
+
+        return $this->getConnection()->exec("
+            INSERT INTO {$this->getTable()}
+              ({$fields})
+            VALUES
+              {$values}
+        ");
+    }
 }
