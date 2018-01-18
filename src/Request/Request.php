@@ -16,7 +16,7 @@ abstract class Request
 
     public function __construct()
     {
-        $this->setMethod($_SERVER['REQUEST_METHOD']);
+        $this->setMethod($_SERVER['REQUEST_METHOD'] ?? null);
         $this->init();
     }
 
