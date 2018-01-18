@@ -30,6 +30,8 @@ abstract class Request
             case Application::CONSOLE;
                 return new ConsoleRequest();
         }
+
+        throw new \LogicException('Undefined application type');
     }
 
     /**
