@@ -54,7 +54,7 @@ class ErrorHandler
             $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
             if (!is_null($error = error_get_last()) && in_array($error['type'], $fatalErrors)) {
                 Log::fatal(new \ErrorException(
-                    $error['message'], $error['type'], 0, $error['file'], $error['line'], 0
+                    $error['message'], $error['type'], 0, $error['file'], $error['line']
                 ));
             }
         });
