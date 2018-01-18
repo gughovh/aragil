@@ -66,6 +66,14 @@ abstract class Model implements ModelInterface
 
     public function insert($data)
     {
+        if(empty($data)) {
+            return 0;
+        }
+
+        if (!isset($data[0])) {
+            $data = [$data];
+        }
+        
         $values = join(',', array_map(function ($row) {
             $row = array_map(function($value) {
                 return $this->getConnection()->quote($value);
@@ -73,7 +81,7 @@ abstract class Model implements ModelInterface
             return '(' . join(',', $row) . ')';
         }, $data));
 
-        $fields = join(',', array_keys($values[0]));
+        $fields = join(',', array_keys($data[0]));
 
         return $this->getConnection()->exec("
             INSERT INTO {$this->getTable()}
