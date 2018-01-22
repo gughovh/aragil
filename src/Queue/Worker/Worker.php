@@ -102,20 +102,19 @@ class Worker
 
     private function shutdown($die = true)
     {
-        if(!$this->currentJob) {
-            return;
-        }
-        
-        $dKey = serialize($this->currentJob);
-        if($this->data[$dKey] > $this->options['retries']) {
-            $this->driver->failJob($this->currentJob);
-            unset($this->data[$dKey]);
-        } else {
-            $this->driver->addJob($this->currentJob);
-            $this->driver->expireJob($this->currentJob);
+        if($this->currentJob) {
+            $dKey = serialize($this->currentJob);
+            if($this->data[$dKey] > $this->options['retries']) {
+                $this->driver->failJob($this->currentJob);
+                unset($this->data[$dKey]);
+            } else {
+                $this->driver->addJob($this->currentJob);
+                $this->driver->expireJob($this->currentJob);
+            }
+
+            $this->driver->setWorkerData($this->data);
         }
 
-        $this->driver->setWorkerData($this->data);
         $die && die;
     }
 }
