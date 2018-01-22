@@ -8,6 +8,7 @@
 
 use Aragil\Core\Config;
 use Aragil\Core\Di;
+use Aragil\Queue\Drivers\Driver;
 
 /**
  * @param $key
