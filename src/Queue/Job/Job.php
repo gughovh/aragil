@@ -44,7 +44,7 @@ abstract class Job implements ShouldQueue
 
     public function getQueue() :string
     {
-        return $this->queue;
+        return (string)$this->queue;
     }
 
     abstract public function handle():void;
