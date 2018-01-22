@@ -66,6 +66,7 @@ class Worker
                     $this->data[$dKey]['tries']++;
                     $job->handle();
                     $driver->expireJob($job);
+                    $this->currentJob = null;
                     unset($this->data[$dKey]);
                 } catch (\Throwable $e) {
                     if($this->data[$dKey] > $retries) {
@@ -101,6 +102,10 @@ class Worker
 
     private function shutdown($die = true)
     {
+        if(!$this->currentJob) {
+            return;
+        }
+        
         $dKey = serialize($this->currentJob);
         if($this->data[$dKey] > $this->options['retries']) {
             $this->driver->failJob($this->currentJob);
