@@ -20,15 +20,15 @@ class QueueInWork extends Command
     public function handle()
     {
         $driver = Driver::make();
-        $failedJobsCount = $driver->getFreshCount();
+        $inWorkJobsCount = $driver->getInWorkCount();
 
-        if(empty($failedJobsCount)) {
+        if(empty($inWorkJobsCount)) {
             $this->line('No working jobs');
             return;
         }
 
         $this->line("In work jobs counts`");
-        foreach ($failedJobsCount as $queue => $count) {
+        foreach ($inWorkJobsCount as $queue => $count) {
             $this->line("\t{$queue}: {$count}");
         }
     }
