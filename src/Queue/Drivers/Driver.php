@@ -68,7 +68,12 @@ abstract class Driver
 
     protected function getQueueFromKey(string $key) :string
     {
-        return str_replace([self::QUEUE_PREFIX, self::QUEUE_IN_WORK_PREFIX, self::QUEUE_FAILED_PREFIX], '', $key);
+        $searches = [
+            self::QUEUE_PREFIX . self::DELIMITER,
+            self::DELIMITER . self::QUEUE_IN_WORK_PREFIX,
+            self::DELIMITER . self::QUEUE_FAILED_PREFIX
+        ];
+        return str_replace($searches, '', $key);
     }
 
     abstract public function addJob(\Aragil\Queue\Job\Job $job);
