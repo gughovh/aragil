@@ -15,6 +15,8 @@ use Aragil\Queue\Worker\Worker;
 
 class QueueCount extends Command
 {
+    protected $description = 'Shows queues jobs count';
+
     public function handle()
     {
         $driver = Driver::make();

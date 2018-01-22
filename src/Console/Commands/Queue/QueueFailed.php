@@ -15,6 +15,8 @@ use Aragil\Queue\Worker\Worker;
 
 class QueueFailed extends Command
 {
+    protected $description = 'Shows queues failed jobs count';
+
     public function handle()
     {
         $driver = Driver::make();

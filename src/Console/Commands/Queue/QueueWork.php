@@ -14,6 +14,8 @@ use Aragil\Queue\Worker\Worker;
 
 class QueueWork extends Command
 {
+    protected $description = 'Run queue jobs. Usage [-q = queue name, -t = timeout, -s = sleep, -r = retry count].';
+
     public function handle()
     {
         $defaultOptions = config('queue');
