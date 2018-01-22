@@ -11,7 +11,7 @@ namespace Aragil\Queue\Drivers;
 abstract class Driver
 {
     const DELIMITER = ':';
-    const QUEUE_PREFIX = 'aragil-queue:';
+    const QUEUE_PREFIX = 'aragil-queue';
     const QUEUE_FAILED_PREFIX = 'failed';
     const QUEUE_IN_WORK_PREFIX = 'in-work';
 
@@ -19,7 +19,7 @@ abstract class Driver
 
     const JOB_STATUS_FRESH  = 1;
     const JOB_STATUS_WORK   = 2;
-    const JOB_STATUS_FAILED = 3;
+    const JOB_STATUS_FAILED = 4;
 
     const JOB_TYPES = [
         'fresh' => [
@@ -55,15 +55,15 @@ abstract class Driver
     {
         return self::QUEUE_PREFIX . self::DELIMITER . $queue;
     }
-    
+
     protected function getInWorkKey($queue) :string
     {
-        return self::QUEUE_PREFIX . $queue . self::DELIMITER . self::QUEUE_IN_WORK_PREFIX;
+        return self::QUEUE_PREFIX . self::DELIMITER . $queue . self::DELIMITER . self::QUEUE_IN_WORK_PREFIX;
     }
 
     protected function getFailedKey($queue) :string
     {
-        return self::QUEUE_PREFIX . $queue . self::DELIMITER . self::QUEUE_FAILED_PREFIX;
+        return self::QUEUE_PREFIX . self::DELIMITER . $queue . self::DELIMITER . self::QUEUE_FAILED_PREFIX;
     }
 
     protected function getQueueFromKey(string $key) :string
@@ -79,10 +79,10 @@ abstract class Driver
     abstract public function addJob(\Aragil\Queue\Job\Job $job);
     abstract public function getJob($queue = null) :\Aragil\Queue\Job\Job;
 
-    abstract public function expireJob(\Aragil\Queue\Job\Job $job, int $jobStatus = self::JOB_STATUS_FRESH | self::JOB_STATUS_WORK | self::JOB_STATUS_FAILED) :void;
+    abstract public function expireJob(\Aragil\Queue\Job\Job $job) :void;
     abstract public function failJob(\Aragil\Queue\Job\Job $job) :void;
 
-    abstract public function hasJob($queue = null, int $jobStatus = self::JOB_STATUS_FRESH) :bool;
+    abstract public function hasJobs($queue = null, int $jobStatus = self::JOB_STATUS_FRESH) :bool;
 
     abstract public function getFailedCount($queue = null) :array;
     abstract public function getFreshCount($queue = null) :array;

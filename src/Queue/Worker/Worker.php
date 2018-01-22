@@ -5,6 +5,7 @@
  * Date: 2018-01-22
  * Time: 1:02 PM
  */
+declare(ticks = 1);
 
 namespace Aragil\Queue\Worker;
 
@@ -49,9 +50,10 @@ class Worker
         $this->data = $driver->getWorkerData();
 
         $this->registerShutDown();
+        $this->sigintShutdown();
 
         while (true) {
-            if ($driver->hasJob($queue)) {
+            if ($driver->hasJobs($queue)) {
                 if($timeout) {
                     set_time_limit($timeout);
                 }
@@ -83,16 +85,31 @@ class Worker
     private function registerShutDown() :void
     {
         register_shutdown_function(function () {
-            $dKey = serialize($this->currentJob);
-            if($this->data[$dKey] > $this->options['retries']) {
-                $this->driver->failJob($this->currentJob);
-                unset($this->data[$dKey]);
-            } else {
-                $this->driver->addJob($this->currentJob);
-                $this->driver->expireJob($this->currentJob);
+            $lastError = error_get_last();
+            if (!is_null($lastError) && $lastError['type'] === E_ERROR) {
+                $this->shutdown();
             }
-
-            $this->driver->setWorkerData($this->data);
         });
+    }
+
+    private function sigintShutdown()
+    {
+        pcntl_signal(SIGTERM, [$this, 'shutdown']);
+        pcntl_signal(SIGINT, [$this, 'shutdown']);
+
+    }
+
+    private function shutdown()
+    {
+        $dKey = serialize($this->currentJob);
+        if($this->data[$dKey] > $this->options['retries']) {
+            $this->driver->failJob($this->currentJob);
+            unset($this->data[$dKey]);
+        } else {
+            $this->driver->addJob($this->currentJob);
+            $this->driver->expireJob($this->currentJob);
+        }
+
+        $this->driver->setWorkerData($this->data);
     }
 }

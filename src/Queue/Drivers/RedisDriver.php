@@ -28,7 +28,13 @@ class RedisDriver extends Driver
     {
         if ($freshKey = current($this->redisConnection->keys($this->getFreshKey($queue ?? '*')))) {
             $job = $this->redisConnection->lpop($freshKey);
-            $this->redisConnection->lpush($this->getInWorkKey($queue), [$job]);
+            $this->redisConnection->hset(
+                $this->getInWorkKey(
+                    $this->getQueueFromKey($freshKey)
+                ),
+                $job,
+                true
+            );
 
             return unserialize($job);
         }
@@ -40,35 +46,15 @@ class RedisDriver extends Driver
     {
         $queue = $job->getQueue();
         $this->redisConnection->lpush($this->getFailedKey($queue), [serialize($job)]);
-        $this->expireJob($job, self::JOB_STATUS_FRESH | self::JOB_STATUS_WORK);
+        $this->expireJob($job);
     }
 
-    public function expireJob(\Aragil\Queue\Job\Job $job, int $jobStatus = self::JOB_STATUS_FRESH | self::JOB_STATUS_WORK | self::JOB_STATUS_FAILED): void
+    public function expireJob(\Aragil\Queue\Job\Job $job): void
     {
-        $queue = $job->getQueue();
-        $expireOptions = [
-            [
-                'queue' => $this->getFreshKey($queue),
-                'status' => self::JOB_STATUS_FRESH
-            ],
-            [
-                'queue' => $this->getInWorkKey($queue),
-                'status' => self::JOB_STATUS_WORK
-            ],
-            [
-                'queue' => $this->getInWorkKey($queue),
-                'status' => self::JOB_STATUS_FAILED
-            ],
-        ];
-
-        foreach ($expireOptions as $option) {
-            if (($jobStatus & $option['status']) && $this->hasJob($option['queue'], $option['status'])) {
-                $this->redisConnection->lpop($option['queue']);
-            }
-        }
+        $this->redisConnection->hdel($this->getInWorkKey($job->getQueue()), serialize($job));
     }
 
-    public function hasJob($queue = null, int $jobStatus = self::JOB_STATUS_FRESH): bool
+    public function hasJobs($queue = null, int $jobStatus = self::JOB_STATUS_FRESH): bool
     {
         $undefinedType = true;
         $exists = false;
@@ -76,7 +62,7 @@ class RedisDriver extends Driver
         foreach (self::JOB_TYPES as $typeName => $options) {
             if($options['type'] & $jobStatus) {
                 $undefinedType = false;
-                $key = $this->{$options['queueName']}($queue);
+                $key = current($this->redisConnection->keys($this->{$options['queueName']}($queue ?? '*')));
                 $exists = $this->redisConnection->llen($key);
             }
         }
@@ -85,7 +71,7 @@ class RedisDriver extends Driver
             throw new InvalidArgumentException("Invalid job type - {$jobStatus}");
         }
 
-        return $exists;
+        return (bool)$exists;
     }
 
     public function getFailedCount($queue = null): array
@@ -106,7 +92,9 @@ class RedisDriver extends Driver
         $freshKeys = $this->redisConnection->keys($this->getFreshKey($queue ?? '*'));
 
         foreach ($freshKeys as $key) {
-            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+            if(!array_intersect([self::QUEUE_IN_WORK_PREFIX, self::QUEUE_FAILED_PREFIX], explode(self::DELIMITER, $key))) {
+                $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+            }
         }
 
         return $counts;
@@ -118,7 +106,7 @@ class RedisDriver extends Driver
         $inWorkKeys = $this->redisConnection->keys($this->getInWorkKey($queue ?? '*'));
 
         foreach ($inWorkKeys as $key) {
-            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->hlen($key);
         }
 
         return $counts;
