@@ -10,13 +10,14 @@ namespace Aragil\Console\Commands\Queue;
 
 
 use Aragil\Console\Command;
+use Aragil\Queue\Drivers\Driver;
 use Aragil\Queue\Worker\Worker;
 
 class QueueInWork extends Command
 {
     public function handle()
     {
-        $driver = \Driver::make();
+        $driver = Driver::make();
         $this->line("In work jobs count: {$driver->getInWorkCount()}");
     }
 }
