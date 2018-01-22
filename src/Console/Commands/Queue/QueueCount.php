@@ -18,6 +18,16 @@ class QueueCount extends Command
     public function handle()
     {
         $driver = Driver::make();
-        $this->line("Jobs count: {$driver->getFreshCount()}");
+        $freshJobsCount = $driver->getFreshCount();
+
+        if(empty($freshJobsCount)) {
+            $this->line('No jobs');
+            return;
+        }
+
+        $this->line("Jobs counts`");
+        foreach ($freshJobsCount as $queue => $count) {
+            $this->line("\t{$queue}: {$count}");
+        }
     }
 }

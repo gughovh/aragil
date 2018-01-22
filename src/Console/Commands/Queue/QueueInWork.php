@@ -18,6 +18,16 @@ class QueueInWork extends Command
     public function handle()
     {
         $driver = Driver::make();
-        $this->line("In work jobs count: {$driver->getInWorkCount()}");
+        $failedJobsCount = $driver->getFreshCount();
+
+        if(empty($failedJobsCount)) {
+            $this->line('No working jobs');
+            return;
+        }
+
+        $this->line("In work jobs counts`");
+        foreach ($failedJobsCount as $queue => $count) {
+            $this->line("\t{$queue}: {$count}");
+        }
     }
 }

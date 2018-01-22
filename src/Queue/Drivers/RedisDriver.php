@@ -26,8 +26,8 @@ class RedisDriver extends Driver
 
     public function getJob($queue = null) :\Aragil\Queue\Job\Job
     {
-        if ($queue = current($this->redisConnection->keys($this->getFreshKey($queue ?? '*')))) {
-            $job = $this->redisConnection->lpop($queue);
+        if ($freshKey = current($this->redisConnection->keys($this->getFreshKey($queue ?? '*')))) {
+            $job = $this->redisConnection->lpop($freshKey);
             $this->redisConnection->lpush($this->getInWorkKey($queue), [$job]);
 
             return unserialize($job);
@@ -76,8 +76,8 @@ class RedisDriver extends Driver
         foreach (self::JOB_TYPES as $typeName => $options) {
             if($options['type'] & $jobStatus) {
                 $undefinedType = false;
-                $queue = $this->{$options['queueName']}();
-                $exists = $this->redisConnection->llen($queue);
+                $key = $this->{$options['queueName']}($queue);
+                $exists = $this->redisConnection->llen($key);
             }
         }
 
@@ -86,5 +86,51 @@ class RedisDriver extends Driver
         }
 
         return $exists;
+    }
+
+    public function getFailedCount($queue = null): array
+    {
+        $counts = [];
+        $failedKeys = $this->redisConnection->keys($this->getFailedKey($queue ?? '*'));
+
+        foreach ($failedKeys as $key) {
+            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+        }
+
+        return $counts;
+    }
+
+    public function getFreshCount($queue = null): array
+    {
+        $counts = [];
+        $freshKeys = $this->redisConnection->keys($this->getFreshCount($queue ?? '*'));
+
+        foreach ($freshKeys as $key) {
+            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+        }
+
+        return $counts;
+    }
+
+    public function getInWorkCount($queue = null): array
+    {
+        $counts = [];
+        $inWorkKeys = $this->redisConnection->keys($this->getInWorkKey($queue ?? '*'));
+
+        foreach ($inWorkKeys as $key) {
+            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+        }
+
+        return $counts;
+    }
+
+    public function setWorkerData(array $data): void
+    {
+        $this->redisConnection->set(self::QUEUE_WORKER_KEY, json_encode(array_merge($this->getWorkerData(), $data)));
+    }
+
+    public function getWorkerData(): array
+    {
+        return json_decode($this->redisConnection->get(self::QUEUE_WORKER_KEY), true);
     }
 }

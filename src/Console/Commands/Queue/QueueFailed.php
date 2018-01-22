@@ -18,6 +18,16 @@ class QueueFailed extends Command
     public function handle()
     {
         $driver = Driver::make();
-        $this->line("Failed jobs count: {$driver->getFailedCount()}");
+        $failedJobsCount = $driver->getFailedCount();
+
+        if(empty($failedJobsCount)) {
+            $this->line('No failed jobs');
+            return;
+        }
+
+        $this->line("Failed jobs counts`");
+        foreach ($failedJobsCount as $queue => $count) {
+            $this->line("\t{$queue}: {$count}");
+        }
     }
 }

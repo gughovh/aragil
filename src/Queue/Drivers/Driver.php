@@ -15,6 +15,8 @@ abstract class Driver
     const QUEUE_FAILED_PREFIX = 'failed';
     const QUEUE_IN_WORK_PREFIX = 'in-work';
 
+    const QUEUE_WORKER_KEY = 'queue-worker-data';
+
     const JOB_STATUS_FRESH  = 1;
     const JOB_STATUS_WORK   = 2;
     const JOB_STATUS_FAILED = 3;
@@ -56,12 +58,17 @@ abstract class Driver
     
     protected function getInWorkKey($queue) :string
     {
-        return $queue . self::DELIMITER . self::QUEUE_IN_WORK_PREFIX;
+        return self::QUEUE_PREFIX . $queue . self::DELIMITER . self::QUEUE_IN_WORK_PREFIX;
     }
 
     protected function getFailedKey($queue) :string
     {
-        return $queue . self::DELIMITER . self::QUEUE_FAILED_PREFIX;
+        return self::QUEUE_PREFIX . $queue . self::DELIMITER . self::QUEUE_FAILED_PREFIX;
+    }
+
+    protected function getQueueFromKey(string $key) :string
+    {
+        return str_replace([self::QUEUE_PREFIX, self::QUEUE_IN_WORK_PREFIX, self::QUEUE_FAILED_PREFIX], '', $key);
     }
 
     abstract public function addJob(\Aragil\Queue\Job\Job $job);
@@ -72,9 +79,9 @@ abstract class Driver
 
     abstract public function hasJob($queue = null, int $jobStatus = self::JOB_STATUS_FRESH) :bool;
 
-    abstract public function getFailedCount($queue = null) :int;
-    abstract public function getFreshCount($queue = null) :int;
-    abstract public function getInWorkCount($queue = null) :int;
+    abstract public function getFailedCount($queue = null) :array;
+    abstract public function getFreshCount($queue = null) :array;
+    abstract public function getInWorkCount($queue = null) :array;
 
     abstract public function setWorkerData(array $data):void;
     abstract public function getWorkerData():array;
