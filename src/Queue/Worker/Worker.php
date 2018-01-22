@@ -87,7 +87,7 @@ class Worker
         register_shutdown_function(function () {
             $lastError = error_get_last();
             if (!is_null($lastError) && $lastError['type'] === E_ERROR) {
-                $this->shutdown();
+                $this->shutdown(false);
             }
         });
     }
@@ -99,7 +99,7 @@ class Worker
 
     }
 
-    private function shutdown()
+    private function shutdown($die = true)
     {
         $dKey = serialize($this->currentJob);
         if($this->data[$dKey] > $this->options['retries']) {
@@ -111,5 +111,6 @@ class Worker
         }
 
         $this->driver->setWorkerData($this->data);
+        $die && die;
     }
 }
