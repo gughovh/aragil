@@ -103,7 +103,7 @@ class RedisDriver extends Driver
     public function getFreshCount($queue = null): array
     {
         $counts = [];
-        $freshKeys = $this->redisConnection->keys($this->getFreshCount($queue ?? '*'));
+        $freshKeys = $this->redisConnection->keys($this->getFreshKey($queue ?? '*'));
 
         foreach ($freshKeys as $key) {
             $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
