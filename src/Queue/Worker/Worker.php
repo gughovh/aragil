@@ -104,7 +104,7 @@ class Worker
     {
         if($this->currentJob) {
             $dKey = serialize($this->currentJob);
-            if($this->data[$dKey] > $this->options['retries']) {
+            if($this->data[$dKey]['tries'] > $this->options['retries']) {
                 $this->driver->failJob($this->currentJob);
                 unset($this->data[$dKey]);
             } else {
