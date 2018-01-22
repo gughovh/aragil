@@ -40,10 +40,10 @@ class RedisDriver extends Driver
     {
         $queue = $job->getQueue();
         $this->redisConnection->lpush($this->getFailedKey($queue), [serialize($job)]);
-        $this->expireJob($job, false);
+        $this->expireJob($job, self::JOB_STATUS_FRESH | self::JOB_STATUS_WORK);
     }
 
-    public function expireJob(\Aragil\Queue\Job\Job $job, int $jobStatus = self::JOB_STATUS_FRESH & self::JOB_STATUS_WORK & self::JOB_STATUS_FAILED): void
+    public function expireJob(\Aragil\Queue\Job\Job $job, int $jobStatus = self::JOB_STATUS_FRESH | self::JOB_STATUS_WORK | self::JOB_STATUS_FAILED): void
     {
         $queue = $job->getQueue();
         $expireOptions = [
@@ -131,6 +131,6 @@ class RedisDriver extends Driver
 
     public function getWorkerData(): array
     {
-        return json_decode($this->redisConnection->get(self::QUEUE_WORKER_KEY), true);
+        return json_decode($this->redisConnection->get(self::QUEUE_WORKER_KEY), true) ?? [];
     }
 }
