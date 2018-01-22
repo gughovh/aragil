@@ -35,7 +35,7 @@ class Worker
 
     public function __construct($options = [])
     {
-        $this->driver = \Driver::make();
+        $this->driver = Driver::make();
         $this->options = $options;
     }
 
@@ -50,30 +50,32 @@ class Worker
 
         $this->registerShutDown();
 
-        while ($driver->hasJob($queue)) {
-            if($timeout) {
-                set_time_limit($timeout);
-            }
-
-            $job = $this->currentJob = $driver->getJob($queue);
-            $dKey = serialize($job);
-            $this->data[$dKey] = $this->data[$dKey] ?? [
-                'tries' => 0
-            ];
-
-            try {
-                $this->data[$dKey]['tries']++;
-                $job->handle();
-                $driver->expireJob($job);
-                unset($this->data[$dKey]);
-            } catch (\Throwable $e) {
-                if($this->data[$dKey] > $retries) {
-                    $driver->failJob($job);
+        while (true) {
+            if ($driver->hasJob($queue)) {
+                if($timeout) {
+                    set_time_limit($timeout);
                 }
-            }
 
-            if($sleep) {
-                sleep($sleep);
+                $job = $this->currentJob = $driver->getJob($queue);
+                $dKey = serialize($job);
+                $this->data[$dKey] = $this->data[$dKey] ?? ['tries' => 0];
+
+                try {
+                    $this->data[$dKey]['tries']++;
+                    $job->handle();
+                    $driver->expireJob($job);
+                    unset($this->data[$dKey]);
+                } catch (\Throwable $e) {
+                    if($this->data[$dKey] > $retries) {
+                        $driver->failJob($job);
+                    }
+                }
+
+                if($sleep) {
+                    sleep($sleep);
+                }
+            } else {
+                sleep(3);
             }
         }
     }
