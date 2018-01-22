@@ -11,6 +11,10 @@ namespace Aragil\Console;
 
 use Aragil\Console\Commands\Help;
 use Aragil\Console\Commands\Migrate;
+use Aragil\Console\Commands\Queue\QueueCount;
+use Aragil\Console\Commands\Queue\QueueFailed;
+use Aragil\Console\Commands\Queue\QueueInWork;
+use Aragil\Console\Commands\Queue\QueueWork;
 use Aragil\Router\Route;
 
 abstract class Command
@@ -83,6 +87,12 @@ abstract class Command
         Route::console('help', Help::class);
         Route::prefix('migrate', function () {
             Route::console('{db}', Migrate::class);
+        });
+        Route::prefix('queue', function () {
+            Route::console('work', QueueWork::class);
+            Route::console('count', QueueCount::class);
+            Route::console('failed-count', QueueFailed::class);
+            Route::console('in-work-count', QueueInWork::class);
         });
     }
 

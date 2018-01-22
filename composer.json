@@ -4,7 +4,8 @@
   "keywords": ["framework", "aragil"],
   "require": {
     "php": ">=7.0.0",
-    "smi2/phpclickhouse": "^0.17.11"
+    "smi2/phpclickhouse": "^0.17.11",
+    "predis/predis": "^1.1"
   },
   "autoload": {
     "psr-4": {

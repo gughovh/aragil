@@ -111,3 +111,14 @@ function request()
 
     return $request;
 }
+
+function dispatch(\Aragil\Queue\Job\Job $job, $queue = 'default')
+{
+    $jobQueue = $job->getQueue();
+
+    if($queue != 'default' || !$jobQueue) {
+        $job->setQueue($queue);
+    }
+
+    Driver::make()->addJob($job);
+}
