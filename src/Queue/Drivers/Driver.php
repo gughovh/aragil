@@ -82,8 +82,6 @@ abstract class Driver
     abstract public function expireJob(\Aragil\Queue\Job\Job $job) :void;
     abstract public function failJob(\Aragil\Queue\Job\Job $job) :void;
 
-    abstract public function hasJobs($queue = null, int $jobStatus = self::JOB_STATUS_FRESH) :bool;
-
     abstract public function getFailedCount($queue = null) :array;
     abstract public function getFreshCount($queue = null) :array;
     abstract public function getInWorkCount($queue = null) :array;

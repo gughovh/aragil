@@ -9,7 +9,6 @@
 namespace Aragil\Queue\Drivers;
 
 use Aragil\Queue\Job\Job;
-use InvalidArgumentException;
 
 class RedisDriver extends Driver
 {
