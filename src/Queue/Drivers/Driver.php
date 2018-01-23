@@ -77,7 +77,7 @@ abstract class Driver
     }
 
     abstract public function addJob(\Aragil\Queue\Job\Job $job);
-    abstract public function getJob($queue = null) :\Aragil\Queue\Job\Job;
+    abstract public function getJob($queue = null) :?\Aragil\Queue\Job\Job;
 
     abstract public function expireJob(\Aragil\Queue\Job\Job $job) :void;
     abstract public function failJob(\Aragil\Queue\Job\Job $job) :void;
