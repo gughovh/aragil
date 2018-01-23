@@ -53,32 +53,34 @@ class Worker
         $this->sigintShutdown();
 
         while (true) {
-            if ($driver->hasJobs($queue)) {
-                if($timeout) {
-                    set_time_limit($timeout);
-                }
+            if($timeout) {
+                set_time_limit($timeout);
+            }
 
-                $job = $this->currentJob = $driver->getJob($queue);
-                $dKey = serialize($job);
-                $this->data[$dKey] = $this->data[$dKey] ?? ['tries' => 0];
+            $job = $this->currentJob = $driver->getJob($queue);
 
-                try {
-                    $this->data[$dKey]['tries']++;
-                    $job->handle();
-                    $driver->expireJob($job);
-                    $this->currentJob = null;
-                    unset($this->data[$dKey]);
-                } catch (\Throwable $e) {
-                    if($this->data[$dKey] > $retries) {
-                        $driver->failJob($job);
-                    }
-                }
-
-                if($sleep) {
-                    sleep($sleep);
-                }
-            } else {
+            if(!($job instanceof Job)) {
                 sleep(3);
+                continue;
+            }
+
+            $dKey = serialize($job);
+            $this->data[$dKey] = $this->data[$dKey] ?? ['tries' => 0];
+
+            try {
+                $this->data[$dKey]['tries']++;
+                $job->handle();
+                $driver->expireJob($job);
+                $this->currentJob = null;
+                unset($this->data[$dKey]);
+            } catch (\Throwable $e) {
+                if($this->data[$dKey] > $retries) {
+                    $driver->failJob($job);
+                }
+            }
+
+            if($sleep) {
+                sleep($sleep);
             }
         }
     }
@@ -97,7 +99,7 @@ class Worker
     {
         pcntl_signal(SIGTERM, [$this, 'shutdown']);
         pcntl_signal(SIGINT, [$this, 'shutdown']);
-
+        pcntl_signal(SIGHUP, [$this, 'shutdown']);
     }
 
     private function shutdown($die = true)
@@ -114,7 +116,6 @@ class Worker
 
             $this->driver->setWorkerData($this->data);
         }
-
         $die && die;
     }
 }
