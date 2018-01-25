@@ -21,13 +21,13 @@ class RedisDriver extends Driver
 
     public function addJob(\Aragil\Queue\Job\Job $job) :void
     {
-        $this->redisConnection->lpush($this->getFreshKey($job->getQueue()), [serialize($job)]);
+        $this->redisConnection->zincrby($this->getFreshKey($job->getQueue()), 1, serialize($job));
     }
 
     public function getJob($queue = null) :?\Aragil\Queue\Job\Job
     {
         if ($freshKey = $this->getFreshKey($queue)) {
-            $job = $this->redisConnection->lpop($freshKey);
+            $job = current($this->redisConnection->zrange($freshKey, -1, -1));
             $jobObj = unserialize($job);
 
             if($jobObj instanceof Job) {
@@ -45,45 +45,45 @@ class RedisDriver extends Driver
         return null;
     }
 
-    public function failJob(\Aragil\Queue\Job\Job $job): void
+    public function failJob(\Aragil\Queue\Job\Job $job) :void
     {
         $queue = $job->getQueue();
-        $this->redisConnection->lpush($this->getFailedKey($queue), [serialize($job)]);
+        $this->redisConnection->zincrby($this->getFailedKey($queue), 1, serialize($job));
         $this->expireJob($job);
     }
 
-    public function expireJob(\Aragil\Queue\Job\Job $job): void
+    public function expireJob(\Aragil\Queue\Job\Job $job) :void
     {
         $this->redisConnection->hdel($this->getInWorkKey($job->getQueue()), serialize($job));
     }
 
-    public function getFailedCount($queue = null): array
+    public function getFailedCount($queue = null) :array
     {
         $counts = [];
         $failedKeys = $this->redisConnection->keys($this->getFailedKey($queue ?? '*'));
 
         foreach ($failedKeys as $key) {
-            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+            $counts[$this->getQueueFromKey($key)] = $this->redisConnection->zcount($key, '-inf', '+inf');
         }
 
         return $counts;
     }
 
-    public function getFreshCount($queue = null): array
+    public function getFreshCount($queue = null) :array
     {
         $counts = [];
         $freshKeys = $this->redisConnection->keys($this->getFreshKey($queue));
 
         foreach ($freshKeys as $key) {
             if(!array_intersect([self::QUEUE_IN_WORK_PREFIX, self::QUEUE_FAILED_PREFIX], explode(self::DELIMITER, $key))) {
-                $counts[$this->getQueueFromKey($key)] = $this->redisConnection->llen($key);
+                $counts[$this->getQueueFromKey($key)] = $this->redisConnection->zcount($key, '-inf', '+inf');
             }
         }
 
         return $counts;
     }
 
-    public function getInWorkCount($queue = null): array
+    public function getInWorkCount($queue = null) :array
     {
         $counts = [];
         $inWorkKeys = $this->redisConnection->keys($this->getInWorkKey($queue ?? '*'));
@@ -95,7 +95,7 @@ class RedisDriver extends Driver
         return $counts;
     }
 
-    public function setWorkerData(array $data): void
+    public function setWorkerData(array $data) :void
     {
         $this->redisConnection->set(self::QUEUE_WORKER_KEY, json_encode(array_merge($this->getWorkerData(), $data)));
     }
