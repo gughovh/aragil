@@ -15,7 +15,7 @@ class File
     const HTML_CACHE_DIR = 'html';
     const JSON_CACHE_DIR = 'json';
 
-    public static function getHtmlCache(string $key, mixed $default = null, string $delimiter = self::DEFAULT_DELIMITER) :mixed
+    public static function getHtmlCache(string $key, mixed $default = null, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
         $cache = $self->getCache($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter));
@@ -26,7 +26,7 @@ class File
         return $cache;
     }
 
-    public static function setHtmlCache(string $key, string $html, string $delimiter = self::DEFAULT_DELIMITER) :mixed
+    public static function setHtmlCache(string $key, string $html, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
 
@@ -42,7 +42,7 @@ class File
         $self->delete($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter));
     }
 
-    public static function getJsonCache(string $key, mixed $default = null, bool $asString = false, string $delimiter = self::DEFAULT_DELIMITER) :mixed
+    public static function getJsonCache(string $key, mixed $default = null, bool $asString = false, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
         $cache = $self->getCache($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter));
@@ -54,7 +54,7 @@ class File
         return $asString ? json_decode($cache, true) : $cache;
     }
 
-    public static function setJsonCache(string $key, array $array, string $delimiter = self::DEFAULT_DELIMITER) :mixed
+    public static function setJsonCache(string $key, array $array, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
 
@@ -70,7 +70,7 @@ class File
         $self->delete($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter));
     }
 
-    private function getCache(string $file) :mixed
+    private function getCache(string $file)
     {
         if(file_exists($file)) {
             return file_get_contents($file);
@@ -97,7 +97,7 @@ class File
         return $storage;
     }
 
-    private function setCache(string $file, string $data) :mixed
+    private function setCache(string $file, string $data)
     {
         return file_put_contents($file, $data);
     }
