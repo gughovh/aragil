@@ -104,7 +104,7 @@ class File
 
     private function delete(string $file) :void
     {
-        unlink($file);
+        file_exists($file) && unlink($file);
     }
 
     private function getFilePath(string $cacheDir, string $key, string $extension, string $delimiter) :string
