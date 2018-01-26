@@ -9,6 +9,7 @@
 namespace Aragil\Queue\Drivers;
 
 use Aragil\Queue\Job\Job;
+use Aragil\Storage\Redis;
 
 class RedisDriver extends Driver
 {
@@ -16,18 +17,19 @@ class RedisDriver extends Driver
 
     public function __construct()
     {
-        $this->redisConnection = \Aragil\Storage\Redis::client();
+        $this->redisConnection = Redis::client();
     }
 
-    public function addJob(\Aragil\Queue\Job\Job $job) :void
+    public function addJob(Job $job) :void
     {
         $this->redisConnection->zincrby($this->getFreshKey($job->getQueue()), 1, serialize($job));
     }
 
-    public function getJob($queue = null) :?\Aragil\Queue\Job\Job
+    public function getJob($queue = null) :?Job
     {
         if ($freshKey = $this->getFreshKey($queue)) {
             $job = current($this->redisConnection->zrange($freshKey, -1, -1));
+            $this->redisConnection->zrem($freshKey, $job);
             $jobObj = unserialize($job);
 
             if($jobObj instanceof Job) {
@@ -45,14 +47,14 @@ class RedisDriver extends Driver
         return null;
     }
 
-    public function failJob(\Aragil\Queue\Job\Job $job) :void
+    public function failJob(Job $job) :void
     {
         $queue = $job->getQueue();
         $this->redisConnection->zincrby($this->getFailedKey($queue), 1, serialize($job));
         $this->expireJob($job);
     }
 
-    public function expireJob(\Aragil\Queue\Job\Job $job) :void
+    public function expireJob(Job $job) :void
     {
         $this->redisConnection->hdel($this->getInWorkKey($job->getQueue()), serialize($job));
     }
@@ -105,7 +107,7 @@ class RedisDriver extends Driver
         return json_decode($this->redisConnection->get(self::QUEUE_WORKER_KEY), true) ?? [];
     }
 
-    protected function getKey($prefix, $queue = null, $suffix = null):?string
+    protected function getKey($prefix, $queue = null, $suffix = null) :?string
     {
         $prefix = (array)$prefix;
         $suffix = (array)$suffix;

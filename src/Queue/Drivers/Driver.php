@@ -8,6 +8,8 @@
 
 namespace Aragil\Queue\Drivers;
 
+use Aragil\Queue\Job\Job;
+
 abstract class Driver
 {
     const DELIMITER = ':';
@@ -51,7 +53,7 @@ abstract class Driver
         return new $class;
     }
 
-    protected function getFreshKey($queue):string
+    protected function getFreshKey($queue) :string
     {
         return self::QUEUE_PREFIX . self::DELIMITER . $queue;
     }
@@ -76,16 +78,16 @@ abstract class Driver
         return str_replace($searches, '', $key);
     }
 
-    abstract public function addJob(\Aragil\Queue\Job\Job $job);
-    abstract public function getJob($queue = null) :?\Aragil\Queue\Job\Job;
+    abstract public function addJob(Job $job);
+    abstract public function getJob($queue = null) :?Job;
 
-    abstract public function expireJob(\Aragil\Queue\Job\Job $job) :void;
-    abstract public function failJob(\Aragil\Queue\Job\Job $job) :void;
+    abstract public function expireJob(Job $job) :void;
+    abstract public function failJob(Job $job) :void;
 
     abstract public function getFailedCount($queue = null) :array;
     abstract public function getFreshCount($queue = null) :array;
     abstract public function getInWorkCount($queue = null) :array;
 
-    abstract public function setWorkerData(array $data):void;
-    abstract public function getWorkerData():array;
+    abstract public function setWorkerData(array $data) :void;
+    abstract public function getWorkerData() :array;
 }
