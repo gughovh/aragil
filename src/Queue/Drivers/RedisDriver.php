@@ -74,7 +74,9 @@ class RedisDriver extends Driver
     public function getFreshCount($queue = null) :array
     {
         $counts = [];
-        $freshKeys = $this->redisConnection->keys($this->getFreshKey($queue));
+        $freshKeys = array_filter($this->redisConnection->keys($this->getFreshKey($queue ?? '*')), function ($key) {
+            return !array_intersect([self::QUEUE_IN_WORK_PREFIX, self::QUEUE_FAILED_PREFIX], explode(self::DELIMITER, $key));
+        });
 
         foreach ($freshKeys as $key) {
             if(!array_intersect([self::QUEUE_IN_WORK_PREFIX, self::QUEUE_FAILED_PREFIX], explode(self::DELIMITER, $key))) {
