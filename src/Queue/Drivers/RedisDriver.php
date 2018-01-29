@@ -47,6 +47,21 @@ class RedisDriver extends Driver
         return null;
     }
 
+    public function getFailedJob($queue = null):?Job
+    {
+        $failedKey = $this->getFailedKey($queue);
+
+        $job = current($this->redisConnection->zrange($failedKey, -1, -1));
+        $this->redisConnection->zrem($failedKey, $job);
+        $jobObj = unserialize($job);
+
+        if($jobObj instanceof Job) {
+            return $jobObj;
+        }
+
+        return null;
+    }
+
     public function failJob(Job $job) :void
     {
         $queue = $job->getQueue();
@@ -59,10 +74,10 @@ class RedisDriver extends Driver
         $this->redisConnection->hdel($this->getInWorkKey($job->getQueue()), serialize($job));
     }
 
-    public function getFailedCount($queue = null) :array
+    public function getFailedCount($queue = '*') :array
     {
         $counts = [];
-        $failedKeys = $this->redisConnection->keys($this->getFailedKey($queue ?? '*'));
+        $failedKeys = $this->redisConnection->keys($this->getFailedKey($queue));
 
         foreach ($failedKeys as $key) {
             $counts[$this->getQueueFromKey($key)] = $this->redisConnection->zcount($key, '-inf', '+inf');
@@ -139,5 +154,12 @@ class RedisDriver extends Driver
         }
 
         return $queueKey;
+    }
+
+    public function getFailedQueues($queue = '*')
+    {
+        return array_map(function($key) {
+            return $this->getQueueFromKey($key);
+        }, $this->redisConnection->keys($this->getFailedKey($queue)));
     }
 }

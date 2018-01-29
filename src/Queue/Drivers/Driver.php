@@ -79,7 +79,11 @@ abstract class Driver
     }
 
     abstract public function addJob(Job $job);
+
     abstract public function getJob($queue = null) :?Job;
+    abstract public function getFailedJob($queue = null) :?Job;
+
+    abstract public function getFailedQueues();
 
     abstract public function expireJob(Job $job) :void;
     abstract public function failJob(Job $job) :void;
