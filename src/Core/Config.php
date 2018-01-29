@@ -54,12 +54,13 @@ class Config
         $value = $this->configs;
 
         foreach ($keys as $key) {
-            if (isset($value[$key])) {
-                $value = $value[$key];
+            if (!isset($value[$key])) {
+                return $defaultValue;
             }
+            $value = $value[$key];
         }
 
-        return $value ?? $defaultValue;
+        return $value;
     }
 
     /**
@@ -93,10 +94,9 @@ class Config
         }
     }
 
-    private static function loadConfig($config = null, $exceptOnes = [])
+    private static function loadConfig($pattern = '*', $exceptOnes = [])
     {
         $dir = self::getConfigDir() . DS;
-        $pattern = $config ?? '*';
         $configs = [];
 
         foreach (glob("{$dir}{$pattern}.php") as $configFile) {
