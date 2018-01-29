@@ -21,7 +21,7 @@ class RequeueFailedJobs extends Command
     {
         $driver = Driver::make();
         $queues = (array)$this->options('-q', $driver->getFailedQueues());
-        $count = (int)$this->options('-c') ?? null;
+        $count = (int)$this->options('-c') ?: null;
 
         foreach ($queues as $queue) {
             while ($job = $driver->getFailedJob($queue)) {
