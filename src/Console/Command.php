@@ -15,6 +15,7 @@ use Aragil\Console\Commands\Queue\QueueCount;
 use Aragil\Console\Commands\Queue\QueueFailed;
 use Aragil\Console\Commands\Queue\QueueInWork;
 use Aragil\Console\Commands\Queue\QueueWork;
+use Aragil\Console\Commands\Queue\RequeueFailedJobs;
 use Aragil\Router\Route;
 
 abstract class Command
@@ -93,6 +94,7 @@ abstract class Command
             Route::console('count', QueueCount::class);
             Route::console('failed-count', QueueFailed::class);
             Route::console('in-work-count', QueueInWork::class);
+            Route::console('requeue-failed-jobs', RequeueFailedJobs::class);
         });
     }
 
