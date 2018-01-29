@@ -20,7 +20,7 @@ class RequeueFailedJobs extends Command
     public function handle()
     {
         $driver = Driver::make();
-        $queues = [$this->options('-q')] ?? $driver->getFailedQueues();
+        $queues = (array)$this->options('-q', $driver->getFailedQueues());
         $count = (int)$this->options('-c') ?? null;
 
         foreach ($queues as $queue) {
