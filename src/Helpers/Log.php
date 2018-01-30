@@ -46,13 +46,14 @@ class Log
     protected static function write($level, $txt)
     {
         $dir = static::getDir();
-        $file = self::OPTIONS[$level];
+        $fileName = $dir . DS . self::OPTIONS[$level];
 
-        $handle = fopen("{$dir}/{$file}","a+");
+        $handle = fopen($fileName,"a+");
         $date = date("Y-m-d H:i:s");
 
         fwrite($handle,"[{$date}] {$txt} \r\n");
         fclose($handle);
+        chmod($fileName, 0666);
     }
 
     protected static function getDir()

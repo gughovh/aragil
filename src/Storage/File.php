@@ -15,7 +15,7 @@ class File
     const HTML_CACHE_DIR = 'html';
     const JSON_CACHE_DIR = 'json';
 
-    public static function getHtmlCache(string $key, mixed $default = null, string $delimiter = self::DEFAULT_DELIMITER)
+    public static function getHtmlCache(string $key, $default = null, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
         $cache = $self->getCache($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter));
@@ -42,7 +42,7 @@ class File
         $self->delete($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter));
     }
 
-    public static function getJsonCache(string $key, mixed $default = null, bool $asString = false, string $delimiter = self::DEFAULT_DELIMITER)
+    public static function getJsonCache(string $key, $default = null, bool $asString = false, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
         $cache = $self->getCache($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter));
@@ -51,7 +51,7 @@ class File
             return $default;
         }
 
-        return $asString ? json_decode($cache, true) : $cache;
+        return $asString ? $cache : json_decode($cache, true);
     }
 
     public static function setJsonCache(string $key, array $array, string $delimiter = self::DEFAULT_DELIMITER)
@@ -79,7 +79,7 @@ class File
         return false;
     }
 
-    private function storage(mixed $path = [], string $delimiter = self::DEFAULT_DELIMITER, bool $create = true) :string
+    private function storage($path = [], string $delimiter = self::DEFAULT_DELIMITER, bool $create = true) :string
     {
         $storage = CACHE_DIR;
 
