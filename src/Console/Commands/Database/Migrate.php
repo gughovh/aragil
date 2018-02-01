@@ -6,7 +6,7 @@
  * Time: 6:50 PM
  */
 
-namespace Aragil\Console\Commands;
+namespace Aragil\Console\Commands\Database;
 
 
 use Aragil\Model\CHModel;
@@ -116,16 +116,25 @@ class Migrate extends Command
 
     private function getMigrations($dir, $ignore)
     {
+//        $macros = $this->getMacros();
         $migrations = [];
         foreach (glob("{$dir}/*.sql") as $migration) {
             $pathInfo = pathinfo($migration);
 
             if(!in_array($pathInfo['filename'], $ignore)) {
                 $migrations[$pathInfo['filename']] = file_get_contents($migration);
+//                $migrations[$pathInfo['filename']] = str_replace(array_keys($macros), array_values($macros), file_get_contents($migration));
             }
         }
 
         return $migrations;
+    }
+
+    private function getMacros()
+    {
+        return [
+            'DATABASE_DIR' => DATABASE_DIR,
+        ];
     }
 
     private function updateMigrated(string $file, array $migratedData)

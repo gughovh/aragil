@@ -9,8 +9,9 @@
 namespace Aragil\Console;
 
 
+use Aragil\Console\Commands\Database\Seed;
 use Aragil\Console\Commands\Help;
-use Aragil\Console\Commands\Migrate;
+use Aragil\Console\Commands\Database\Migrate;
 use Aragil\Console\Commands\Queue\QueueCount;
 use Aragil\Console\Commands\Queue\QueueFailed;
 use Aragil\Console\Commands\Queue\QueueInWork;
@@ -88,6 +89,9 @@ abstract class Command
         Route::console('help', Help::class);
         Route::prefix('migrate', function () {
             Route::console('{db}', Migrate::class);
+        });
+        Route::prefix('seed', function () {
+            Route::console('{db}', Seed::class);
         });
         Route::prefix('queue', function () {
             Route::console('work', QueueWork::class);
