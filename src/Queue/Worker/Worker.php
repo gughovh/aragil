@@ -89,7 +89,8 @@ class Worker
     {
         register_shutdown_function(function () {
             $lastError = error_get_last();
-            if (!is_null($lastError) && $lastError['type'] === E_ERROR) {
+            $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
+            if (!is_null($lastError) && in_array($lastError['type'], $fatalErrors)) {
                 $this->shutdown(false);
             }
         });
