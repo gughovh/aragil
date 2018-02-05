@@ -9,6 +9,8 @@
 namespace Aragil\Storage;
 
 
+use Aragil\Helpers\Log;
+
 class File
 {
     const DEFAULT_DELIMITER = '.';
@@ -18,7 +20,7 @@ class File
     public static function getHtmlCache(string $key, $default = null, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
-        $cache = $self->getCache($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter));
+        $cache = $self->getCache($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter, false));
 
         if($cache === false) {
             return $default;
@@ -29,23 +31,27 @@ class File
     public static function setHtmlCache(string $key, string $html, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
-
-        return $self->setCache(
+        $bytes = $self->setCache(
             $self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter),
             $html
         );
+
+        if ($bytes === false) {
+            Log::error("Could not set cache for key - {$key}");
+        }
+        return $bytes;
     }
 
     public static function deleteHtmlCache(string $key, string $delimiter = self::DEFAULT_DELIMITER) :void
     {
         $self = new self;
-        $self->delete($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter));
+        $self->delete($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter, false));
     }
 
     public static function getJsonCache(string $key, $default = null, bool $asString = false, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
-        $cache = $self->getCache($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter));
+        $cache = $self->getCache($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter, false));
 
         if($cache === false) {
             return $default;
@@ -57,17 +63,22 @@ class File
     public static function setJsonCache(string $key, array $array, string $delimiter = self::DEFAULT_DELIMITER)
     {
         $self = new self;
-
-        return $self->setCache(
+        $bytes = $self->setCache(
             $self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter),
             json_encode($array)
         );
+
+        if ($bytes === false) {
+            Log::error("Could not set cache for key - {$key}");
+        }
+
+        return $bytes;
     }
 
     public static function deleteJsonCache(string $key, string $delimiter = self::DEFAULT_DELIMITER) :void
     {
         $self = new self;
-        $self->delete($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter));
+        $self->delete($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter, false));
     }
 
     private function getCache(string $file)
@@ -107,12 +118,12 @@ class File
         file_exists($file) && unlink($file);
     }
 
-    private function getFilePath(string $cacheDir, string $key, string $extension, string $delimiter) :string
+    private function getFilePath(string $cacheDir, string $key, string $extension, string $delimiter, $createDir = true) :string
     {
         $pathInfo = array_filter(explode($delimiter, $key));
         array_unshift($pathInfo, $cacheDir);
         $file = array_pop($pathInfo);
 
-        return $this->storage($pathInfo) . DIRECTORY_SEPARATOR . $file . '.' . $extension;
+        return $this->storage($pathInfo, $delimiter, $createDir) . DIRECTORY_SEPARATOR . $file . '.' . $extension;
     }
 }
