@@ -9,6 +9,7 @@ declare(ticks = 1);
 
 namespace Aragil\Queue\Worker;
 
+use Aragil\Helpers\Log;
 use Aragil\Queue\Drivers\Driver;
 use Aragil\Queue\Job\Job;
 
@@ -91,7 +92,9 @@ class Worker
             $lastError = error_get_last();
             $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
             if (!is_null($lastError) && in_array($lastError['type'], $fatalErrors)) {
-                $this->shutdown(false);
+                $this->shutdown(false, new \ErrorException(
+                    $lastError['message'], $lastError['type'], 0, $lastError['file'], $lastError['line']
+                ));
             }
         });
     }
@@ -103,7 +106,7 @@ class Worker
         pcntl_signal(SIGHUP, [$this, 'shutdown']);
     }
 
-    private function shutdown($die = true)
+    private function shutdown($die = true, \Throwable $error = null)
     {
         if($this->currentJob) {
             $dKey = serialize($this->currentJob);
@@ -117,6 +120,15 @@ class Worker
 
             $this->driver->setWorkerData($this->data);
         }
+
+        if (!($error instanceof \Throwable)) {
+            $error = new \ErrorException("Received kill signal. Queue worker, queue - \"{$this->options['queue']}\"");
+        }
+        
+        Log::fatal(new \ErrorException(
+            $error['message'], $error['type'], 0, $error['file'], $error['line']
+        ));
+
         $die && die;
     }
 }
