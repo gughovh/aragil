@@ -77,7 +77,12 @@ class Worker
             } catch (\Throwable $e) {
                 if($this->data[$dKey] > $retries) {
                     $driver->failJob($job);
+                } else {
+                    $driver->addJob($job);
+                    $driver->expireJob($job);
                 }
+
+                Log::fatal($e);
             }
 
             if($sleep) {
@@ -106,7 +111,7 @@ class Worker
         pcntl_signal(SIGHUP, [$this, 'shutdown']);
     }
 
-    private function shutdown($die = true, \Throwable $error = null)
+    private function shutdown($die = true, $error = null)
     {
         if($this->currentJob) {
             $dKey = serialize($this->currentJob);
@@ -124,7 +129,7 @@ class Worker
         if (!($error instanceof \Throwable)) {
             $error = new \ErrorException("Received kill signal. Queue worker, queue - \"{$this->options['queue']}\"");
         }
-        
+
         Log::fatal(new \ErrorException(
             $error['message'], $error['type'], 0, $error['file'], $error['line']
         ));
