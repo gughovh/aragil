@@ -17,10 +17,23 @@ class File
     const HTML_CACHE_DIR = 'html';
     const JSON_CACHE_DIR = 'json';
 
-    public static function getHtmlCache(string $key, $default = null, string $delimiter = self::DEFAULT_DELIMITER)
+    private $options = [
+        'baseDir' => CACHE_DIR,
+        'delimiter' => self::DEFAULT_DELIMITER,
+    ];
+
+    public function __construct(array $options = [], string $baseDir = null)
     {
-        $self = new self;
-        $cache = $self->getCache($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter, false));
+        $this->options = array_merge($this->options, array_filter($options));
+    }
+
+    public static function getHtmlCache(string $key, $default = null, string $baseDir = null, string $delimiter = null)
+    {
+        $self = new self([
+            'baseDir' => $baseDir,
+            'delimiter' => $delimiter,
+        ]);
+        $cache = $self->getCache($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', false));
 
         if($cache === false) {
             return $default;
@@ -28,11 +41,14 @@ class File
         return $cache;
     }
 
-    public static function setHtmlCache(string $key, string $html, string $delimiter = self::DEFAULT_DELIMITER)
+    public static function setHtmlCache(string $key, string $html, string $baseDir = null, string $delimiter = null)
     {
-        $self = new self;
+        $self = new self([
+            'baseDir' => $baseDir,
+            'delimiter' => $delimiter,
+        ]);
         $bytes = $self->setCache(
-            $self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter),
+            $self->getFilePath(self::HTML_CACHE_DIR, $key, 'html'),
             $html
         );
 
@@ -42,16 +58,22 @@ class File
         return $bytes;
     }
 
-    public static function deleteHtmlCache(string $key, string $delimiter = self::DEFAULT_DELIMITER) :void
+    public static function deleteHtmlCache(string $key, string $baseDir = null, string $delimiter = null) :void
     {
-        $self = new self;
-        $self->delete($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', $delimiter, false));
+        $self = new self([
+            'baseDir' => $baseDir,
+            'delimiter' => $delimiter,
+        ]);
+        $self->delete($self->getFilePath(self::HTML_CACHE_DIR, $key, 'html', false));
     }
 
-    public static function getJsonCache(string $key, $default = null, bool $asString = false, string $delimiter = self::DEFAULT_DELIMITER)
+    public static function getJsonCache(string $key, $default = null, bool $asString = false, string $baseDir = null, string $delimiter = null)
     {
-        $self = new self;
-        $cache = $self->getCache($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter, false));
+        $self = new self([
+            'baseDir' => $baseDir,
+            'delimiter' => $delimiter,
+        ]);
+        $cache = $self->getCache($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', false));
 
         if($cache === false) {
             return $default;
@@ -60,11 +82,29 @@ class File
         return $asString ? $cache : json_decode($cache, true);
     }
 
-    public static function setJsonCache(string $key, array $array, string $delimiter = self::DEFAULT_DELIMITER)
+    public static function getJsonPath(string $key, bool $check = true, string $baseDir = null, string $delimiter = null)
     {
-        $self = new self;
+        $self = new self([
+            'baseDir' => $baseDir,
+            'delimiter' => $delimiter,
+        ]);
+        $file = $self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', false);
+
+        if($check && !file_exists($file)) {
+            return false;
+        }
+
+        return $file;
+    }
+
+    public static function setJsonCache(string $key, array $array, string $baseDir = null, string $delimiter = null)
+    {
+        $self = new self([
+            'baseDir' => $baseDir,
+            'delimiter' => $delimiter,
+        ]);
         $bytes = $self->setCache(
-            $self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter),
+            $self->getFilePath(self::JSON_CACHE_DIR, $key, 'json'),
             json_encode($array)
         );
 
@@ -75,10 +115,13 @@ class File
         return $bytes;
     }
 
-    public static function deleteJsonCache(string $key, string $delimiter = self::DEFAULT_DELIMITER) :void
+    public static function deleteJsonCache(string $key, string $baseDir = null, string $delimiter = null) :void
     {
-        $self = new self;
-        $self->delete($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', $delimiter, false));
+        $self = new self([
+            'baseDir' => $baseDir,
+            'delimiter' => $delimiter,
+        ]);
+        $self->delete($self->getFilePath(self::JSON_CACHE_DIR, $key, 'json', false));
     }
 
     private function getCache(string $file)
@@ -90,17 +133,17 @@ class File
         return false;
     }
 
-    private function storage($path = [], string $delimiter = self::DEFAULT_DELIMITER, bool $create = true) :string
+    private function storage($path = [], bool $create = true) :string
     {
-        $storage = CACHE_DIR;
+        $storage = $this->options['baseDir'];
 
         if(is_string($path)) {
-            $path = explode($delimiter, $path);
+            $path = explode($this->options['delimiter'], $path);
         }
 
         if($path && $pathArray = array_filter($path)) {
             while ($dir = array_shift($pathArray)) {
-                $storage .= DIRECTORY_SEPARATOR . $dir;
+                $storage .= DS . $dir;
                 $create && (is_dir($storage) || mkdir($storage));
             }
         }
@@ -118,12 +161,12 @@ class File
         file_exists($file) && unlink($file);
     }
 
-    private function getFilePath(string $cacheDir, string $key, string $extension, string $delimiter, $createDir = true) :string
+    private function getFilePath(string $cacheDir, string $key, string $extension, $createDir = true) :string
     {
-        $pathInfo = array_filter(explode($delimiter, $key));
+        $pathInfo = array_filter(explode($this->options['delimiter'], $key));
         array_unshift($pathInfo, $cacheDir);
         $file = array_pop($pathInfo);
 
-        return $this->storage($pathInfo, $delimiter, $createDir) . DIRECTORY_SEPARATOR . $file . '.' . $extension;
+        return $this->storage($pathInfo, $createDir) . DIRECTORY_SEPARATOR . $file . '.' . $extension;
     }
 }
