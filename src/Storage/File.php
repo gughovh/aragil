@@ -141,10 +141,16 @@ class File
             $path = explode($this->options['delimiter'], $path);
         }
 
-        if($path && $pathArray = array_filter($path)) {
-            while ($dir = array_shift($pathArray)) {
+        $pathArray = array_filter($path, function ($dir) {
+            return $dir !== '';
+        });
+
+        if($pathArray) {
+            $dir = array_shift($pathArray);
+            while ($dir !== null && $dir !== false) {
                 $storage .= DS . $dir;
                 $create && (is_dir($storage) || mkdir($storage));
+                $dir = array_shift($pathArray);
             }
         }
 
@@ -163,7 +169,10 @@ class File
 
     private function getFilePath(string $cacheDir, string $key, string $extension, $createDir = true) :string
     {
-        $pathInfo = array_filter(explode($this->options['delimiter'], $key));
+        $pathInfo = array_filter(explode($this->options['delimiter'], $key), function ($dir) {
+            return $dir !== '';
+        });
+
         array_unshift($pathInfo, $cacheDir);
         $file = array_pop($pathInfo);
 
