@@ -15,34 +15,35 @@ abstract class CHModel extends Client implements ModelInterface
 {
     private static $instance = null;
 
-    public function __construct()
+    public function __construct(array $options = [])
     {
-        parent::__construct(self::getConnectionParams());
-        $this->database(ini('clickhouse.database'));
+        parent::__construct(self::getConnectionParams($options));
+        $this->database($options['database'] ?? ini('clickhouse.database'));
         $this->setTimeout(0);
     }
 
     /**
+     * @param array $options
      * @return Client
      */
-    public static function getClickHouseConnection()
+    public static function getClickHouseConnection(array $options = [])
     {
         if(is_null(self::$instance)) {
-            self::$instance = new parent(self::getConnectionParams());
+            self::$instance = new parent(self::getConnectionParams($options));
             self::$instance->setTimeout(0);
-            self::$instance->database(ini('clickhouse.database'));
+            self::$instance->database($options['database'] ?? ini('clickhouse.database'));
         }
         return self::$instance;
     }
 
-    private static function getConnectionParams()
+    private static function getConnectionParams(array $options = [])
     {
-        return [
+        return array_merge([
             'host' => ini('clickhouse.host'),
             'port' => ini('clickhouse.port'),
             'username' => ini('clickhouse.username'),
             'password' => ini('clickhouse.password'),
-        ];
+        ], $options);
     }
 
     protected function customInsert(array $data, \Closure $closure)

@@ -26,7 +26,7 @@ class QueueWork extends Command
             'retries' => $this->options('-r') ?? $defaultOptions['retries'],
         ];
 
-        $worker = new Worker($options);
+        $worker = new Worker($this, $options);
         $worker->run();
     }
 }

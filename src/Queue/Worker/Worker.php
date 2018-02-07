@@ -12,6 +12,7 @@ namespace Aragil\Queue\Worker;
 use Aragil\Helpers\Log;
 use Aragil\Queue\Drivers\Driver;
 use Aragil\Queue\Job\Job;
+use Aragil\Console\Command;
 
 class Worker
 {
@@ -21,9 +22,19 @@ class Worker
     private $driver;
 
     /**
+     * @var QueueWork
+     */
+    private $command;
+
+    /**
      * @var array
      */
-    private $options;
+    private $options = [
+        'queue' => null,
+        'timeout' => 600,
+        'sleep' => 0,
+        'retries' => 5,
+    ];
 
     /**
      * @var Job
@@ -35,10 +46,11 @@ class Worker
      */
     private $data;
 
-    public function __construct($options = [])
+    public function __construct(Command $command, array $options = [])
     {
         $this->driver = Driver::make();
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
+        $this->command = $command;
     }
 
     public function run() :void
@@ -65,6 +77,7 @@ class Worker
                 continue;
             }
 
+            $job->setWorker($this);
             $dKey = serialize($job);
             $this->data[$dKey] = $this->data[$dKey] ?? ['tries' => 0];
 
@@ -89,6 +102,11 @@ class Worker
                 sleep($sleep);
             }
         }
+    }
+
+    public function getCommand()
+    {
+        return $this->command;
     }
 
     private function registerShutDown() :void
@@ -130,9 +148,7 @@ class Worker
             $error = new \ErrorException("Received kill signal. Queue worker, queue - \"{$this->options['queue']}\"");
         }
 
-        Log::fatal(new \ErrorException(
-            $error['message'], $error['type'], 0, $error['file'], $error['line']
-        ));
+        Log::fatal($error);
 
         $die && die;
     }

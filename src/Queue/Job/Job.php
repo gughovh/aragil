@@ -8,11 +8,20 @@
 
 namespace Aragil\Queue\Job;
 
+use Aragil\Queue\Worker\Worker;
 use ReflectionProperty;
 
 abstract class Job implements ShouldQueue
 {
+    /**
+     * @var string
+     */
     protected $queue;
+
+    /**
+     * @var Worker
+     */
+    private $worker;
 
     public function serialize() :string
     {
@@ -35,6 +44,22 @@ abstract class Job implements ShouldQueue
         foreach ($data as $propName => $value) {
             $this->{$propName} = $value;
         }
+    }
+
+    /**
+     * @return Worker
+     */
+    public function getWorker() :Worker
+    {
+        return $this->worker;
+    }
+
+    /**
+     * @param Worker $worker
+     */
+    public function setWorker(Worker $worker)
+    {
+        $this->worker = $worker;
     }
 
     public function setQueue(string $queue)
