@@ -107,7 +107,7 @@ abstract class Command
      */
     protected function line($text)
     {
-        echo $text . PHP_EOL;
+        echo '[' . date('Y-m-d H:i:s') . '] ' . $text . PHP_EOL;
     }
 
     /**
