@@ -104,10 +104,15 @@ abstract class Command
 
     /**
      * @param $text
+     * @param bool $withDate
      */
-    protected function line($text)
+    protected function line($text, $withDate = true)
     {
-        echo '[' . date('Y-m-d H:i:s') . '] ' . $text . PHP_EOL;
+        if($withDate) {
+            $text = '[' . date('Y-m-d H:i:s') . '] ' . $text;
+        }
+
+        echo $text . PHP_EOL;
     }
 
     /**

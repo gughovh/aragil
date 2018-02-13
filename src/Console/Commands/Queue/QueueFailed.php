@@ -23,13 +23,13 @@ class QueueFailed extends Command
         $failedJobsCount = $driver->getFailedCount();
 
         if(empty($failedJobsCount)) {
-            $this->line('No failed jobs');
+            $this->line('No failed jobs', false);
             return;
         }
 
         $this->line("Failed jobs counts`");
         foreach ($failedJobsCount as $queue => $count) {
-            $this->line("\t{$queue}: {$count}");
+            $this->line("\t{$queue}: {$count}", false);
         }
     }
 }

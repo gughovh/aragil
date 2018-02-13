@@ -84,7 +84,7 @@ class Migrate extends Command
                 $this->line("Ended migration {$filename}");
                 $failed = false;
             } catch (\Throwable $e) {
-                $this->line("Filed migration {$filename}");
+                $this->line("Failed migration {$filename}");
                 $this->line($e->getMessage());
                 $meta['status'] = 'failed';
                 $meta['error'] = (array)$e;
@@ -98,7 +98,7 @@ class Migrate extends Command
         }
 
         if(empty($migrations)) {
-            $this->line('Nothing to migrate.');
+            $this->line('Nothing to migrate.', false);
         }
 
         $this->updateMigrated($migratedFile, $migratedData);

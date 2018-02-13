@@ -23,13 +23,13 @@ class QueueInWork extends Command
         $inWorkJobsCount = $driver->getInWorkCount();
 
         if(empty($inWorkJobsCount)) {
-            $this->line('No working jobs');
+            $this->line('No working jobs', false);
             return;
         }
 
         $this->line("In work jobs counts`");
         foreach ($inWorkJobsCount as $queue => $count) {
-            $this->line("\t{$queue}: {$count}");
+            $this->line("\t{$queue}: {$count}", false);
         }
     }
 }

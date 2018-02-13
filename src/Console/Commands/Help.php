@@ -50,7 +50,7 @@ class Help extends Command
         $commandsDescriptions = array_filter($commandsDescriptions);
         sort($commandsDescriptions);
         foreach ($commandsDescriptions as $description) {
-            $this->line($description);
+            $this->line($description, false);
         }
     }
 

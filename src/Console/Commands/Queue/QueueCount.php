@@ -23,13 +23,13 @@ class QueueCount extends Command
         $freshJobsCount = $driver->getFreshCount();
 
         if(empty($freshJobsCount)) {
-            $this->line('No jobs');
+            $this->line('No jobs', false);
             return;
         }
 
         $this->line("Jobs counts`");
         foreach ($freshJobsCount as $queue => $count) {
-            $this->line("\t{$queue}: {$count}");
+            $this->line("\t{$queue}: {$count}", false);
         }
     }
 }

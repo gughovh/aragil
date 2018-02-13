@@ -102,7 +102,7 @@ class Seed extends Command
                 $this->line("Ended seeder {$filename}");
                 $failed = false;
             } catch (\Throwable $e) {
-                $this->line("Filed seeder {$filename}");
+                $this->line("Failed seeder {$filename}");
                 $this->line($e->getMessage());
                 $meta['status'] = 'failed';
                 $meta['error'] = (array)$e;
@@ -116,7 +116,7 @@ class Seed extends Command
         }
 
         if(empty($seeders)) {
-            $this->line('Nothing to seed.');
+            $this->line('Nothing to seed.', false);
         }
 
         $this->updateSeedData($seedFile, $commandData);
