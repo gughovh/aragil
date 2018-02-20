@@ -29,7 +29,7 @@ class Help extends Command
         $routes = $router->getRoutes();
         $commandsDescriptions = [];
 
-        $this->line('Available commands:');
+        $this->line('Available commands:', false);
         /** @var $route  Route */
         foreach ($routes as $route) {
             if($route->getMethod() != ConsoleRequest::DEFAULT_METHOD) {

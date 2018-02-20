@@ -53,6 +53,8 @@ class ConsoleRequest extends Request
 
     protected function parsePathInfo()
     {
-        return array_filter(explode(':', $this->command));
+        return array_filter(explode(':', $this->command), function ($i) {
+            return trim($i) !== '';
+        });
     }
 }

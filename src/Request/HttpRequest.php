@@ -52,7 +52,10 @@ class HttpRequest extends Request
         $urlInfo = parse_url($_SERVER['REQUEST_URI']);
         return array_values(
             array_filter(
-                explode('/', str_replace($_SERVER['SCRIPT_NAME'],'', $urlInfo['path']))
+                explode('/', str_replace($_SERVER['SCRIPT_NAME'],'', $urlInfo['path'])),
+                function ($i) {
+                    return trim($i) !== '';
+                }
             )
         );
     }
