@@ -93,6 +93,7 @@ function getPdo($params, $option = [])
     if(!array_key_exists($key, $connections)) {
         $dsn = "mysql:dbname={$params['database']};host={$params['host']}";
         $connections[$key] = new PDO($dsn, $params['username'], $params['password'], $option);
+        $connections[$key]->exec('SET NAMES utf8');
     }
 
     return $connections[$key];
