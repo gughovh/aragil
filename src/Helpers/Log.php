@@ -27,21 +27,21 @@ class Log
 
     const VERBOSE = [
         self::FATAL => [
+            self::INFO,
+            self::DEBUG,
+            self::ERROR,
             self::FATAL,
         ],
         self::ERROR => [
-            self::FATAL,
+            self::INFO,
+            self::DEBUG,
             self::ERROR,
         ],
         self::DEBUG => [
-            self::FATAL,
-            self::ERROR,
+            self::INFO,
             self::DEBUG,
         ],
         self::INFO  => [
-            self::FATAL,
-            self::ERROR,
-            self::DEBUG,
             self::INFO,
         ],
     ];
@@ -71,7 +71,7 @@ class Log
     {
         /** @var $request Request */
         $request = Di::getInstance()['request'];
-        $debug = $request->input('debug');
+        $verbose = $request->input('debug');
         $dir = static::getDir();
         $fileName = $dir . DS . self::OPTIONS[$level];
 
@@ -79,9 +79,9 @@ class Log
         $date = date("Y-m-d H:i:s");
         $txt = "[{$date}] {$txt} \r\n";
 
-        if($debug) {
-            if(in_array($debug, self::VERBOSE[self::INFO])) {
-                if (in_array($debug, self::VERBOSE[$level])) {
+        if($verbose) {
+            if(in_array($verbose, self::VERBOSE[self::FATAL])) {
+                if (in_array($verbose, self::VERBOSE[$level])) {
                     echo $txt;
                 }
             } else {
