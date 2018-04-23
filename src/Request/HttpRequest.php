@@ -19,6 +19,11 @@ class HttpRequest extends Request
         $this->formParams = $_POST;
     }
 
+    public function input($param = null, $default = null)
+    {
+        return $this->get($param, $default);
+    }
+
     /**
      * @param mixed $param
      * @param mixed $default

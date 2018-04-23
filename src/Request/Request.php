@@ -34,6 +34,8 @@ abstract class Request
         throw new \LogicException('Undefined application type');
     }
 
+    abstract public function input($param = null, $default = null);
+
     /**
      * @return array
      */

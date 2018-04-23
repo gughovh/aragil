@@ -31,6 +31,15 @@ class ConsoleRequest extends Request
         }
     }
 
+    public function input($param = null, $default = null)
+    {
+        if(is_null($param)) {
+            return $this->getConsoleParams();
+        }
+
+        return $this->getConsoleParams()[$param] ?? $default;
+    }
+
     public function getConsoleParams()
     {
         return $this->consoleParams;

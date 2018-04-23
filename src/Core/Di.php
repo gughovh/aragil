@@ -18,6 +18,7 @@ class Di implements \ArrayAccess
     private function __construct(){}
 
     /**
+     * @param string $appName
      * @return Di
      */
     public static function getInstance($appName = 'main')
