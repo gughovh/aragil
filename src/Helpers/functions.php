@@ -100,6 +100,27 @@ function getPdo($params, $option = [])
 }
 
 /**
+ * @Require mongodb/mongodb package
+ * @param array $params
+ * @param array $option
+ * @return MongoDB\Client
+ */
+function getMongoDbConnection($params = [], $option = [])
+{
+    static $connections = [];
+
+    $key = md5(json_encode(array_merge($params, $option)));
+
+    if(!array_key_exists($key, $connections)) {
+        $params = array_merge(config('mongo'), $params);
+        $uri = "mongodb://{$params['username']}:{$params['password']}@{$params['hostname']}:{$params['port']}/{$params['db']}";
+        $connections[$key] = new MongoDB\Client($uri);
+    }
+
+    return $connections[$key];
+}
+
+/**
  * @return \Aragil\Request\Request
  */
 function request()
