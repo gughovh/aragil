@@ -25,7 +25,7 @@ abstract class Model implements ModelInterface
      * Model constructor.
      * @param array $settings
      */
-    public function __construct($settings)
+    public function __construct($settings = null)
     {
         if(isset($settings['pdo']) && $settings['pdo'] instanceof \PDO) {
             $this->setConnection($settings['pdo']);
@@ -42,7 +42,11 @@ abstract class Model implements ModelInterface
     public function getConnection()
     {
         if(is_null($this->connection)) {
-            $this->setConnection(getPdo($this->connectionParams));
+            $this->setConnection(
+                getPdo(
+                    $this->getConnectionParams()
+                )
+            );
         }
 
         return $this->connection;
@@ -64,6 +68,18 @@ abstract class Model implements ModelInterface
         $this->connectionParams = $params;
     }
 
+    /**
+     * @return array|null
+     */
+    public function getConnectionParams()
+    {
+        if(is_null($this->connectionParams)) {
+            $this->setConnectionParams(config('mysql') ?? ini('mysql'));
+        }
+
+        return $this->connectionParams;
+    }
+
     public function insert($data)
     {
         if(empty($data)) {
@@ -73,7 +89,7 @@ abstract class Model implements ModelInterface
         if (!isset($data[0])) {
             $data = [$data];
         }
-        
+
         $values = join(',', array_map(function ($row) {
             $row = array_map(function($value) {
                 return $this->getConnection()->quote($value);
