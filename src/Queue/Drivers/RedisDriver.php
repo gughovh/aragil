@@ -18,6 +18,10 @@ class RedisDriver extends Driver
     public function __construct()
     {
         $this->redisConnection = Redis::client();
+
+        if(!$this->redisConnection) {
+            throw new \RuntimeException('Could not connect to redis');
+        }
     }
 
     public function addJob(Job $job) :void

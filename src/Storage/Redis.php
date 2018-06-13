@@ -8,29 +8,41 @@
 
 namespace Aragil\Storage;
 
+use Aragil\Helpers\Log;
+
 class Redis
 {
+    private static $client = null;
     private static $connectionParams = [
-        'host'              =>  null,
-        'port'              =>  null,
-        'timeout'           =>  null,
+        'host'              =>  'localhost',
+        'port'              =>  6379,
+        'timeout'           =>  0.0,
         'reserved'          =>  null,
-        'retry_interval'    =>  null,
-        'read_timeout'      =>  null
+        'retry_interval'    =>  0,
+        'read_timeout'      =>  0.0
     ];
 
-    public static function client()
+    public static function client($forceReconnect = false)
     {
-        self::$connectionParams = array_merge(self::$connectionParams, ini('redis'));
-        $client = new \Redis();
-        $client->connect(
-            self::$connectionParams['host'] ?? 'localhost',
-            (int) self::$connectionParams['port'],
-            (int) self::$connectionParams['timeout'],
-            self::$connectionParams['reserved'] ?? '',
-            (int) self::$connectionParams['retry_interval'],
-            (int) self::$connectionParams['read_timeout']
-        );
-        return $client;
+        if (is_null(self::$client) || $forceReconnect) {
+            self::$connectionParams = array_merge(self::$connectionParams, ini('redis', []));
+            self::$client = new \Redis();
+
+            try {
+                self::$client->connect(
+                    self::$connectionParams['host'],
+                    (int) self::$connectionParams['port'],
+                    (float) self::$connectionParams['timeout'],
+                    self::$connectionParams['reserved'],
+                    (int) self::$connectionParams['retry_interval'],
+                    (float) self::$connectionParams['read_timeout']
+                );
+            } catch (\RedisException $e) {
+                Log::error($e->getMessage());
+                return false;
+            }
+        }
+
+        return self::$client;
     }
 }
