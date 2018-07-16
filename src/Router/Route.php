@@ -180,7 +180,7 @@ class Route
      */
     private function _prefix($prefix)
     {
-        $this->prefixes = (array)$prefix;
+        $this->prefixes = is_string($prefix) ? explode($this->getDelimiter(), $prefix) : $prefix;
 
         return $this;
     }
