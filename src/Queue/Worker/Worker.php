@@ -88,7 +88,7 @@ class Worker
                 $this->currentJob = null;
                 unset($this->data[$dKey]);
             } catch (\Throwable $e) {
-                if($this->data[$dKey] > $retries) {
+                if($this->data[$dKey]['tries'] > $retries) {
                     $driver->failJob($job);
                 } else {
                     $driver->addJob($job);
